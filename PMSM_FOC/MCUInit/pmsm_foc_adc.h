@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -90,17 +90,17 @@ typedef enum SHS_GAIN_FACTOR
  ********************************************************************************************************************/
 typedef struct ADC_TYPE_t
 {
-  int32_t adc_bias_iu;			/* Bias of ADC Iu. */
-  int32_t adc_bias_iv;			/* Bias of ADC Iv. */
-  int32_t adc_bias_iw;			/* Bias of ADC Iw. */
-  int32_t adc_bias_idc;		  /* Bias of dc-link current amplifier, or on-chip gain */
+  int32_t adc_bias_iu;          /* Bias of ADC Iu. */
+  int32_t adc_bias_iv;          /* Bias of ADC Iv. */
+  int32_t adc_bias_iw;          /* Bias of ADC Iw. */
+  int32_t adc_bias_idc;       /* Bias of dc-link current amplifier, or on-chip gain */
 
-  int32_t adc_res_pot;			/* ADC Value of potentiometer (POT) */
-  int32_t adc_res_vdc;			/* ADC Value of inverter DC link voltage Vdc */
+  int32_t adc_res_pot;          /* ADC Value of potentiometer (POT) */
+  int32_t adc_res_vdc;          /* ADC Value of inverter DC link voltage Vdc */
   int32_t adc_res_idc;          /* ADC Value of inverter DC link current Idc*/
   int32_t adc_res_temp;         /* ADC Value of temperature sensor */
 
-  uint16_t adc_res_iu;		    /* ADC result Motor Ph-U */
+  uint16_t adc_res_iu;          /* ADC result Motor Ph-U */
   uint16_t adc_res_iv;          /* ADC result Motor Ph-V */
   uint16_t adc_res_iw;          /* ADC result Motor Ph-W */
 

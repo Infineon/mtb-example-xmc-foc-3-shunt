@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -73,6 +73,8 @@
 #define SWAP(x,y)                            int32_t t;t=x;x=y;y=t;        /*!< Swap two numbers */
 #define ADCLPF                               (3U)
 #define SYSTEM_BE_IDLE                       ((ADC.adc_res_pot < USER_TH_POT_ADC) || (PMSM_FOC_CTRL.motor_start_flag == 0))    /*!< Reference is too low then go to IDLE state */
+
+
 
 /*********************************************************************************************************************
  * ENUMS
@@ -204,6 +206,7 @@ typedef struct {
   uint16_t vf_offset; /*!<  V/F open loop offset */
   uint16_t vf_constant; /*!<  V/F constant */
   uint16_t vf_speed_ramp_up_rate; /*!<  V/F speed ramp up rate */
+  uint16_t vf_speed_ramp_up_step;
   uint16_t vf_speed_ramp_counter; /*!<  ramp counter to track ramp up rate */
   uint16_t vf_transition_speed; /*!<  V/F transition to close loop speed */
   uint16_t vf_motor_speed; /*!<  V/F open loop motor speed */
@@ -212,6 +215,9 @@ typedef struct {
   uint16_t stablization_count; /*!< Time before jump to close loop */
   uint16_t stablization_counter; /*!< Counter to track time before jump to close loop */
   uint8_t dont_exit_open_loop_flag; /*!< If flag set to 1 ctrl will not go to close loop - Useful for debugging only */
+  /* to use these two variables */
+  int16_t speed_angle_conversion_factor;      /*!< Rotor speed to angle conversion factor */
+  int16_t speed_angle_conversion_factor_scale; /*!< Rotor speed to angle conversion factor scale */
 
 } PMSM_FOC_VF_OPEN_LOOP_t;
 
@@ -276,14 +282,14 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_MiscWorksOfFOC(void);
  * API DEFINATION
  ********************************************************************************************************************/
 /**
- * @brief	3-Shunt 3-Phase Current Reconstruction, ADC values are from last PWM cycle
- * 		ADCs of 2or3-Shunt are triggered by CCU83 CR1S
+ * @brief   3-Shunt 3-Phase Current Reconstruction, ADC values are from last PWM cycle
+ *      ADCs of 2or3-Shunt are triggered by CCU83 CR1S
  *
  * @param vadc_res_iu
  * @param vadc_res_iv
  * @param vadc_res_iw
  *
- *@retval 	*PMSM_FOC_INPUT_t
+ *@retval   *PMSM_FOC_INPUT_t
  */
 
 __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_CurrentReconstruction(int32_t vadc_res_iu, int32_t vadc_res_iv, int32_t vadc_res_iw, PMSM_FOC_INPUT_t * const handle_ptr)

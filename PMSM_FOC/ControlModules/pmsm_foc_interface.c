@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -40,8 +40,8 @@
  * HEADER FILES
  ********************************************************************************************************************/
 
-#include <PMSM_FOC/Configuration/pmsm_foc_common.h>
-#include <PMSM_FOC/Configuration/pmsm_foc_user_input_config.h>
+#include "../Configuration/pmsm_foc_common.h"
+#include "../Configuration/pmsm_foc_user_input_config.h"
 #include "../Configuration/pmsm_foc_mcuhw_params.h"
 #include "../MIDSys/pmsm_foc_pi.h"
 #include "../ToolInterface/ProbeScope/probe_scope.h"
@@ -92,11 +92,11 @@ void PMSM_FOC_MiscWorks(void)
     ADC.adc_res_pot += (int32_t) ((pot_adc_result - ADC.adc_res_pot) >> USER_POT_ADC_LPF);
     if (ADC.adc_res_pot < (USER_TH_POT_ADC>>1))
     {
-    	ADC.adc_res_pot = 0;  /* prevent the GUI's Target Set bar from moving around the 0% */
+        ADC.adc_res_pot = 0;  /* prevent the GUI's Target Set bar from moving around the 0% */
     }
     if (ADC.adc_res_pot > 4000)
     {
-    	ADC.adc_res_pot = 4096; /* prevent the GUI's Target Set bar from moving around the 100% */
+        ADC.adc_res_pot = 4096; /* prevent the GUI's Target Set bar from moving around the 100% */
     }
   }
 
@@ -110,8 +110,7 @@ void PMSM_FOC_MiscWorks(void)
       /* Limit speed, in case ADC values not 0 ~ 2^12.*/
       PMSM_FOC_CTRL.set_val_pot = MIN_MAX_LIMIT(PMSM_FOC_CTRL.set_val_pot, MotorParam.SPEED_REF_HIGH_LIMIT_TS, MotorParam.SPEED_REF_LOW_LIMIT_TS);
       /* Ramp generates the Motor reference speed */
-      PMSM_FOC_LinearRampGenerator(PMSM_FOC_CTRL.set_val_pot, MotorParam.RAMP_UP_SPEED, MotorParam.RAMP_DOWN_SPEED,
-      USER_SPEED_RAMP_SLEWRATE, &PMSM_FOC_INPUT.ref_speed);
+      PMSM_FOC_LinearRampGenerator(PMSM_FOC_CTRL.set_val_pot, MotorParam.RAMP_UP_SPEED, MotorParam.RAMP_DOWN_SPEED, MotorParam.SPEED_RAMP_SLEWRATE, &PMSM_FOC_INPUT.ref_speed);
     }
 
     else if (PMSM_FOC_CTRL.ctrl_scheme_fun_ptr == &PMSM_FOC_VqVoltageCtrl)

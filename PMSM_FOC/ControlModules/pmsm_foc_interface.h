@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -42,7 +42,7 @@
  * HEADER FILES
  ********************************************************************************************************************/
 
-#include <PMSM_FOC/MIDSys/pmsm_foc_svpwm.h>
+#include "../MIDSys/pmsm_foc_svpwm.h"
 #include "../MIDSys/pmsm_foc_current_sense_3S.h"
 #include "../MIDSys/pmsm_foc_debug.h"
 #include "../ControlModules/pmsm_foc_error_handling.h"
@@ -102,18 +102,18 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
   /***************** Over/Under voltage protection ************************************/
 
   if ((MotorParam.EnableFault.OverVoltage == 1) && (MotorParam.EnableFault.UnderVoltage == 1))
-	{
-	  if (ADC.adc_res_vdc > MotorParam.OVERVOLTAGE_THRESHOLD)
-	  {
-		/* Next Go to error state */
-		  MotorVar.error_status |= PMSM_FOC_EID_OVER_VOLT;
-	  }
-	  else if (ADC.adc_res_vdc < MotorParam.UNDERVOLTAGE_THRESHOLD)
-	  {
-		/* Next Go to error state */
-		  MotorVar.error_status |= PMSM_FOC_EID_UNDER_VOLT;
-	  }
-	}
+    {
+      if (ADC.adc_res_vdc > MotorParam.OVERVOLTAGE_THRESHOLD)
+      {
+        /* Next Go to error state */
+          MotorVar.error_status |= PMSM_FOC_EID_OVER_VOLT;
+      }
+      else if (ADC.adc_res_vdc < MotorParam.UNDERVOLTAGE_THRESHOLD)
+      {
+        /* Next Go to error state */
+          MotorVar.error_status |= PMSM_FOC_EID_UNDER_VOLT;
+      }
+    }
 // End of Over/Under voltage protection
 
   /***************** Over Current protection *****************************************/
@@ -130,7 +130,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
   {
     /* Next Go to error state */
       PMSM_FOC_CTRL.error_status |= PMSM_FOC_EID_OVER_CURRENT;
-	  MotorVar.error_status |= PMSM_FOC_EID_OVER_CURRENT;
+      MotorVar.error_status |= PMSM_FOC_EID_OVER_CURRENT;
   }
 #endif  // End of #if(USER_OVERCURRENT_PROTECTION == ENABLED)
 
@@ -145,7 +145,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
       {
         /* Next Go to error state */
           PMSM_FOC_CTRL.error_status |= PMSM_FOC_EID_TORQUE_LIMIT_EXCEED;
-    	  MotorVar.error_status |= PMSM_FOC_EID_TORQUE_LIMIT_EXCEED;
+          MotorVar.error_status |= PMSM_FOC_EID_TORQUE_LIMIT_EXCEED;
         /* Reset associated variables */
         PMSM_FOC_CTRL.iq_limit_blanking_counter = 0;
         PMSM_FOC_OUTPUT.park_transform.torque_iq = 0;
@@ -177,13 +177,13 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
   adc_res_tempSense_raw = XMC_VADC_GROUP_GetResult(VADC_TEMP_GROUP, VADC_TEMP_CHANNEL);
   if (MotorParam.Vadc_Ref_Voltage == 33)
   {
-  	/* DVDD = 3.3V */
-	  adc_res_tempSense_degreeC = ((adc_res_tempSense_raw - 620) * 660) >> 9;  /* 660/512=1.289063 */
+    /* DVDD = 3.3V */
+      adc_res_tempSense_degreeC = ((adc_res_tempSense_raw - 620) * 660) >> 9;  /* 660/512=1.289063 */
   }
   else
   {
-  	/* DVDD = 5.0V */
-	  adc_res_tempSense_degreeC = ((adc_res_tempSense_raw - 409) * 125) >> 6;  /* 125/64=1.953125 */
+    /* DVDD = 5.0V */
+      adc_res_tempSense_degreeC = ((adc_res_tempSense_raw - 409) * 125) >> 6;  /* 125/64=1.953125 */
   }
   MotorVar.t_sensor.sum += (adc_res_tempSense_degreeC - MotorVar.t_sensor.output) << 10;    /* simple low pass filter, time constant = 64 tics */
 

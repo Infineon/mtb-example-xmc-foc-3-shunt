@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -67,18 +67,18 @@
  */
 void PMSM_FOC_DRIVER_nFAULT_ISR(void)
 {
-	  MotorVar.error_status |= PMSM_FOC_EID_NFAULT_FAULT;
-	/* Check error status against enable fault */
-	  MotorVar.MaskedFault.Value = MotorVar.error_status & MotorParam.EnableFault.Value;
-	  if (MotorVar.MaskedFault.Value != PMSM_FOC_EID_NO_ERROR)
-	  {
-	  /* Enable braking mode in 6EDL7141 gate driver as per user config through nBRAKE pin and go to error state */
-	  /* Enable low side braking in 6EDL7141 gate driver through nBRAKE pin */
-	  XMC_GPIO_SetOutputLow(CYBSP_GD_NBRAKE);
+      MotorVar.error_status |= PMSM_FOC_EID_NFAULT_FAULT;
+    /* Check error status against enable fault */
+      MotorVar.MaskedFault.Value = MotorVar.error_status & MotorParam.EnableFault.Value;
+      if (MotorVar.MaskedFault.Value != PMSM_FOC_EID_NO_ERROR)
+      {
+      /* Enable braking mode in 6EDL7141 gate driver as per user config through nBRAKE pin and go to error state */
+      /* Enable low side braking in 6EDL7141 gate driver through nBRAKE pin */
+      XMC_GPIO_SetOutputLow(CYBSP_GD_NBRAKE);
 
-	  /* Next go to ERROR state & wait until it get cleared */
-	  PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_ERROR;
-	  }
+      /* Next go to ERROR state & wait until it get cleared */
+      PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_ERROR;
+      }
 
 } /* End of PMSM_FOC_DRIVER_nFAULT_ISR () */
 

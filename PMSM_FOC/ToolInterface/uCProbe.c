@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -41,6 +41,7 @@
 
 #include "xmc1_flash.h"
 #include "uCProbe.h"
+#include "ProbeScope/cfg/probe_scope_cfg.h"
 #include "../ControlModules/pmsm_foc_functions.h"
 #include "../ControlModules/pmsm_foc_interface.h"
 #include "../ControlModules/pmsm_foc_state_machine.h"
@@ -86,14 +87,14 @@ void PMSM_FOC_uCProbe_Init(void)
 /***********************************************************************************************************************/
 void PMSM_FOC_ucProbe_ReadFlash(void)
 {
-	uint8_t *pi_conf_ptr = (uint8_t *)&PI_CONFIG;
-	uint8_t *pi_flash_ptr = (uint8_t *)PMSM_SL_FOC_PI_CONFIG_ADDR;
-	for (int32_t i=0; i<PI_CONFIG_SIZE; i++)
-	{
-		*pi_conf_ptr = *pi_flash_ptr;
-		pi_conf_ptr++;
-		pi_flash_ptr++;
-	}
+    uint8_t *pi_conf_ptr = (uint8_t *)&PI_CONFIG;
+    uint8_t *pi_flash_ptr = (uint8_t *)PMSM_SL_FOC_PI_CONFIG_ADDR;
+    for (int32_t i=0; i<PI_CONFIG_SIZE; i++)
+    {
+        *pi_conf_ptr = *pi_flash_ptr;
+        pi_conf_ptr++;
+        pi_flash_ptr++;
+    }
 }
 
 /***********************************************************************************************************************/
@@ -121,7 +122,7 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
   {
    case UCPROBE_CMD_CLEAR_ERROR:  /*Clear Error state */
         /* STOP motor */
-	    MotorVar.fault_clear = 1;
+        MotorVar.fault_clear = 1;
         /* Command is processed */
         ucProbe_cmd = 0;
 //        PMSM_FOC_MotorStart();  /* cannot use MotorStart() to reset error because this function check PMSM_FOC_CTRL.msm_state != error, set pot to zero will clear the error status */
@@ -183,12 +184,12 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
    case UCPROBE_CMD_LOAD_DFLT_PARAM:  /* load default value of MotorParam, PI parameter and 6edl7141 regs to Flash */
      /* configure MotorParam parameters*/
      MOTOR_PARAM_set_default();
-	  /* configure PI parameters */
-	  PI_set_default();
-	  SystemVar.ParamConfigured = 1;
-	  /* Configure 6edl7141 regs with default parameter */
-	  EDL7141_MOTOR_PARAM_set_default();
-	  SystemVar.Edl7141Configured = 1;
+      /* configure PI parameters */
+      PI_set_default();
+      SystemVar.ParamConfigured = 1;
+      /* Configure 6edl7141 regs with default parameter */
+      EDL7141_MOTOR_PARAM_set_default();
+      SystemVar.Edl7141Configured = 1;
      break;
 
 

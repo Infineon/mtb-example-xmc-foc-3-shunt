@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -118,46 +118,46 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VADC_GetPhasecurrent(uint16
   {
     case 0:
     case 5:
-	/* Sectors A and F. ADC sequences - Iw -> Iv -> Iu */
-	handle_ptr->adc_res_iu = I3;
-	handle_ptr->adc_res_iv = I1;
-	handle_ptr->adc_res_iw = I2;
+    /* Sectors A and F. ADC sequences - Iw -> Iv -> Iu */
+    handle_ptr->adc_res_iu = I3;
+    handle_ptr->adc_res_iv = I1;
+    handle_ptr->adc_res_iw = I2;
     break;
 
     case 1:
     case 2:
-	/* Sectors B and C. ADC sequences - Iw -> Iu -> Iv */
-	handle_ptr->adc_res_iu = I1;
-	handle_ptr->adc_res_iv = I3;
-	handle_ptr->adc_res_iw = I2;
+    /* Sectors B and C. ADC sequences - Iw -> Iu -> Iv */
+    handle_ptr->adc_res_iu = I1;
+    handle_ptr->adc_res_iv = I3;
+    handle_ptr->adc_res_iw = I2;
 
-	if (MotorParam.BiDirectional == ENABLED )
-	{
-		/* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
-		if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
-		{
-		  handle_ptr->adc_res_iv = I2;
-		  handle_ptr->adc_res_iw = I3;
-		}
-	}
-	break;
+    if (MotorParam.BiDirectional == ENABLED )
+    {
+        /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
+        if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
+        {
+          handle_ptr->adc_res_iv = I2;
+          handle_ptr->adc_res_iw = I3;
+        }
+    }
+    break;
 
     default:
-	/* Process for all other cases, Sectors D and E. ADC sequences - Iu -> Iv -> Iw */
-	handle_ptr->adc_res_iu = I1;
-	handle_ptr->adc_res_iv = I2;
-	handle_ptr->adc_res_iw = I3;
+    /* Process for all other cases, Sectors D and E. ADC sequences - Iu -> Iv -> Iw */
+    handle_ptr->adc_res_iu = I1;
+    handle_ptr->adc_res_iv = I2;
+    handle_ptr->adc_res_iw = I3;
 
-	if (MotorParam.BiDirectional == ENABLED )
-	{
-		/* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
-		if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
-		{
-		  handle_ptr->adc_res_iv = I3;
-		  handle_ptr->adc_res_iw = I2;
-		}
-	}
-	break;
+    if (MotorParam.BiDirectional == ENABLED )
+    {
+        /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
+        if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
+        {
+          handle_ptr->adc_res_iv = I3;
+          handle_ptr->adc_res_iw = I2;
+        }
+    }
+    break;
   }
 
   /* If SVM sector changed */
@@ -179,15 +179,15 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VADC_GetPhasecurrent(uint16
       VADC_G1->ALIAS = (((uint32_t)VADC_IV_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
       VADC_G0->ALIAS = ((uint32_t)VADC_IW_G0_CHANNEL);
 
-	  if (MotorParam.BiDirectional == ENABLED )
-	  {
-		  /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
-		  if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
-		  {
-			/* ADC sequences - Iu -> Iv -> Iw */
-			VADC_G1->ALIAS = (((uint32_t)VADC_IW_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
-			VADC_G0->ALIAS = ((uint32_t)VADC_IV_G0_CHANNEL);
-		  }
+      if (MotorParam.BiDirectional == ENABLED )
+      {
+          /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
+          if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
+          {
+            /* ADC sequences - Iu -> Iv -> Iw */
+            VADC_G1->ALIAS = (((uint32_t)VADC_IW_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
+            VADC_G0->ALIAS = ((uint32_t)VADC_IV_G0_CHANNEL);
+          }
       }
       break;
 
@@ -196,16 +196,16 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VADC_GetPhasecurrent(uint16
       VADC_G1->ALIAS = (((uint32_t)VADC_IW_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
       VADC_G0->ALIAS = ((uint32_t) VADC_IV_G0_CHANNEL);
 
-	  if (MotorParam.BiDirectional == ENABLED )
-	  {
-		  /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
-		  if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
-		  {
-			/* ADC sequences - Iu -> Iw -> Iv */
-			VADC_G1->ALIAS = (((uint32_t)VADC_IV_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
-			VADC_G0->ALIAS = ((uint32_t)VADC_IW_G0_CHANNEL);
-		  }
-	  }
+      if (MotorParam.BiDirectional == ENABLED )
+      {
+          /* May need swap SVPWM CCU8 duty cycles of phase V and W, so that motor reverses */
+          if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
+          {
+            /* ADC sequences - Iu -> Iw -> Iv */
+            VADC_G1->ALIAS = (((uint32_t)VADC_IV_G1_CHANNEL << VADC_G_ALIAS_ALIAS1_Pos) | VADC_IU_G1_CHANNEL);
+            VADC_G0->ALIAS = ((uint32_t)VADC_IW_G0_CHANNEL);
+          }
+      }
       break;
     }
   }

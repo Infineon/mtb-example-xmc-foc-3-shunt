@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -152,7 +152,7 @@ void PMSM_FOC_VariablesInit(void)
   PMSM_FOC_OUTPUT.decoupling_iq = 0;
 
   PMSM_FOC_OUTPUT.svm_vref_16 = 0;
-  PMSM_FOC_OUTPUT.svm_angle_16 = 0;		// Init Vref angle θ = X°.
+  PMSM_FOC_OUTPUT.svm_angle_16 = 0;     // Init Vref angle θ = X°.
 
   PMSM_FOC_OUTPUT.car2pol.vref_angle_q31 = PMSM_FOC_ANGLE_090_DEGREE_Q31;
 
@@ -198,8 +198,8 @@ void PMSM_FOC_PLL_Init(PMSM_FOC_PLL_ESTIMATOR_t * const pll_estimator_ptr)
   pll_estimator_ptr->phase_inductance_Ls = MotorParam.DEFAULT_LS_SCALEDUP;
   pll_estimator_ptr->phase_inductance_scale = MotorParam.DEFAULT_SCALE_OF_L;
 
-  /* Resolution increase, use (16 + USER_RES_INC) bit to represent 360 deg. */
-  pll_estimator_ptr->res_inc = USER_RES_INC;
+  pll_estimator_ptr->speed_angle_conversion_factor = MotorParam.SPEED_TO_ANGLE_CONV_FACTOR;
+  pll_estimator_ptr->speed_angle_conversion_factor_scale = MotorParam.SPEED_TO_ANGLE_CONV_FACTOR_SCALE;
 
   /* Filter coefficients used inside PLL observer */
   pll_estimator_ptr->lpf_n_bemf = USER_PLL_LPF;
@@ -409,8 +409,10 @@ void PMSM_FOC_VF_OpenLoopInit(void)
   PMSM_FOC_VF_OPEN_LOOP_CTRL.vf_constant = MotorParam.STARTUP_VF_V_PER_HZ_CONST;
   PMSM_FOC_VF_OPEN_LOOP_CTRL.vf_transition_speed = MotorParam.STARTUP_VF_TRANSITION_SPEED;
   PMSM_FOC_VF_OPEN_LOOP_CTRL.vf_speed_ramp_up_rate = MotorParam.STARTUP_VF_SPEED_RAMP_UP_RATE;
+  PMSM_FOC_VF_OPEN_LOOP_CTRL.vf_speed_ramp_up_step = MotorParam.STARTUP_VF_SPEED_RAMP_UP_STEP;
   PMSM_FOC_VF_OPEN_LOOP_CTRL.stablization_count = MotorParam.STARTUP_VF_STABILIZATION_COUNT;
-
+  PMSM_FOC_VF_OPEN_LOOP_CTRL.speed_angle_conversion_factor = MotorParam.SPEED_TO_ANGLE_CONV_FACTOR;
+  PMSM_FOC_VF_OPEN_LOOP_CTRL.speed_angle_conversion_factor_scale = MotorParam.SPEED_TO_ANGLE_CONV_FACTOR_SCALE;
   if (MotorParam.ControlScheme == VF_OPEN_LOOP_CTRL)
   {
     PMSM_FOC_VF_OPEN_LOOP_CTRL.dont_exit_open_loop_flag = TRUE;
@@ -419,6 +421,7 @@ void PMSM_FOC_VF_OpenLoopInit(void)
   {
     PMSM_FOC_VF_OPEN_LOOP_CTRL.dont_exit_open_loop_flag = FALSE;
   }
+
 
   /* Reset V/F control variables  */
   PMSM_FOC_VF_OPEN_LOOP_CTRL.vf_motor_speed = 0;
@@ -441,7 +444,7 @@ void PMSM_FOC_VF_OpenLoopInit(void)
 static void PMSM_FOC_SVPWM_Init(void)
 {
   SVPWM.previous_sector_num = 0;
-  SVPWM.flag_3or2_adc = USE_ALL_ADC;		/* Init to use all (e.g.: three) ADC samplings for current reconstruction, for 2or3-shunt.*/
+  SVPWM.flag_3or2_adc = USE_ALL_ADC;        /* Init to use all (e.g.: three) ADC samplings for current reconstruction, for 2or3-shunt.*/
   SVPWM.pwm_period_reg_val = MotorParam.CCU8_PERIOD_REG_T;
   SVPWM.vadc_trigger_point = (MotorParam.CCU8_PERIOD_REG_T >> 1) + MotorParam.DRIVERIC_DELAY;
   SVPWM.t_min = 200;

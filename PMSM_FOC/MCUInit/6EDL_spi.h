@@ -3,7 +3,7 @@
  * @brief SPI interface for middleware and application code
  *
  **********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -46,7 +46,7 @@
 #include "xmc_spi.h"
 #include "xmc_usic.h"
 #include "../Configuration/pmsm_foc_user_input_config.h"
-#include "../Configuration/pmsm_foc_6EDL7141_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../ToolInterface/Register.h"
 
 /*********************************************************************************************************************

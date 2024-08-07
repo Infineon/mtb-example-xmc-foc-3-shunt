@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -39,7 +39,7 @@
 /*********************************************************************************************************************
  * HEADER FILES
  ********************************************************************************************************************/
-#include <PMSM_FOC/MIDSys/pmsm_foc_svpwm.h>
+#include "PMSM_FOC/MIDSys/pmsm_foc_svpwm.h"
 #include <xmc_common.h>              /* SFR declarations of the selected device */
 #include "../ControlModules/pmsm_foc_functions.h"
 #include "../MIDSys/pmsm_foc_pi.h"
@@ -58,7 +58,7 @@
 /*********************************************************************************************************************
  * GLOBAL DATA
 *********************************************************************************************************************/
-extern const uint16_t SIN60_TAB[];	/* Sine LUT used for SVM calculations, array size 256 or 1024. */
+extern const uint16_t SIN60_TAB[];  /* Sine LUT used for SVM calculations, array size 256 or 1024. */
 
 /*********************************************************************************************************************
  * LOCAL DATA
@@ -163,210 +163,210 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_SVPWM_Update(uint16_t amplitude, uint16_t a
 /* This function calculates the duty cycle for each phase as per 7 Segment(Continuous) SVPWM modulation */
 void PMSM_FOC_SVPWM_7Seg(uint16_t t0, uint16_t t1, uint16_t t2, uint16_t t1nt2)
 {
-	/* 7-segment SVM, T0, T0_111 for first [111], T0_111 + T1/2, T0_111 + T2/2, T0_111 + (T1+T2)/2. */
-	uint16_t t0_111;
-	uint16_t t0nhalft1;
-	uint16_t t0nhalft2;
-	uint16_t t0nhalft1nt2;
-	uint16_t pwm_period;
+    /* 7-segment SVM, T0, T0_111 for first [111], T0_111 + T1/2, T0_111 + T2/2, T0_111 + (T1+T2)/2. */
+    uint16_t t0_111;
+    uint16_t t0nhalft1;
+    uint16_t t0nhalft2;
+    uint16_t t0nhalft1nt2;
+    uint16_t pwm_period;
 
-	pwm_period = SVPWM.pwm_period_reg_val;
-	t0_111 = t0 >> RATIO_T0_111;												            /* T0_111, time of first [111]. */
-	t0nhalft1 = (t0 + (uint16_t)(t1 << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;				/* T0_111 + T1/2. */
-	t0nhalft2 = (t0 + (uint16_t)(t2 << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;				/* T0_111 + T2/2. */
-	t0nhalft1nt2 = (t0 + (uint16_t)((t1 + t2) << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;	    /* T0_111 + (T1+T2)/2. */
+    pwm_period = SVPWM.pwm_period_reg_val;
+    t0_111 = t0 >> RATIO_T0_111;                                                            /* T0_111, time of first [111]. */
+    t0nhalft1 = (t0 + (uint16_t)(t1 << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;               /* T0_111 + T1/2. */
+    t0nhalft2 = (t0 + (uint16_t)(t2 << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;               /* T0_111 + T2/2. */
+    t0nhalft1nt2 = (t0 + (uint16_t)((t1 + t2) << (RATIO_T0_111 - 1U))) >> RATIO_T0_111;     /* T0_111 + (T1+T2)/2. */
 
-	/* Standard 7-segment symmetric PWM: */
-	switch (SVPWM.current_sector_num)
-	{
-		case 0:														/* Sector A */
+    /* Standard 7-segment symmetric PWM: */
+    switch (SVPWM.current_sector_num)
+    {
+        case 0:                                                     /* Sector A */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
-		sampling_critical_vector = t2;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        sampling_critical_vector = t2;
+        break;
 
-		case 1:														/* Sector B */
+        case 1:                                                     /* Sector B */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
-		sampling_critical_vector = t1;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        sampling_critical_vector = t1;
+        break;
 
-		case 2:													/* Sector C */
+        case 2:                                                 /* Sector C */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
-		sampling_critical_vector = t2;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
+        sampling_critical_vector = t2;
+        break;
 
-		case 3:														/* Sector D */
+        case 3:                                                     /* Sector D */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0nhalft1;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
-		sampling_critical_vector = t1;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        sampling_critical_vector = t1;
+        break;
 
-		case 4:														/* Sector E */
+        case 4:                                                     /* Sector E */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
-		sampling_critical_vector = t2;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        sampling_critical_vector = t2;
+        break;
 
-		case 5:														/* Sector F */
+        case 5:                                                     /* Sector F */
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) t0nhalft1nt2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1nt2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0_111;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) t0_111;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - t0_111);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
-		sampling_critical_vector = t1;
-		break;
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) t0nhalft1;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - t0nhalft1);
+        sampling_critical_vector = t1;
+        break;
 
-		default:
-		// Control should not come here.
-		break;
-	}
+        default:
+        // Control should not come here.
+        break;
+    }
 }
 
 /* This function calculates the duty cycle for each phase as per 5 Segment(Discontinuous) SVPWM modulation */
 void PMSM_FOC_SVPWM_5Seg(uint16_t t0, uint16_t t1, uint16_t t2, uint16_t t1nt2)
 {
-	/* 5-segment SVM, (T1+T2)/2, T2/2, T1/2 */
-	uint16_t half_t1nt2;
-	uint16_t half_t2;
-	uint16_t half_t1;
-	uint16_t pwm_period;
+    /* 5-segment SVM, (T1+T2)/2, T2/2, T1/2 */
+    uint16_t half_t1nt2;
+    uint16_t half_t2;
+    uint16_t half_t1;
+    uint16_t pwm_period;
 
-	pwm_period = SVPWM.pwm_period_reg_val;
+    pwm_period = SVPWM.pwm_period_reg_val;
 
-	half_t2 = t2 >> 1U;                    // T2/2.
-	half_t1 = t1 >> 1U;                    // T1/2.
-	half_t1nt2 = t1nt2>> 1U;              // (T1+T2)/2.
+    half_t2 = t2 >> 1U;                    // T2/2.
+    half_t1 = t1 >> 1U;                    // T1/2.
+    half_t1nt2 = t1nt2>> 1U;              // (T1+T2)/2.
 
-	/* Standard 5-segment symmetric PWM: */
-	switch (SVPWM.current_sector_num)
-	{
-		case 0:                        // Sector A
+    /* Standard 5-segment symmetric PWM: */
+    switch (SVPWM.current_sector_num)
+    {
+        case 0:                        // Sector A
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		sampling_critical_vector = t2;
-		break;
+        sampling_critical_vector = t2;
+        break;
 
-		case 1:                       // Sector B
+        case 1:                       // Sector B
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		sampling_critical_vector = t1;
-		break;
+        sampling_critical_vector = t1;
+        break;
 
-		case 2:                       // Sector C
+        case 2:                       // Sector C
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
 
-		sampling_critical_vector = t2;
-		break;
+        sampling_critical_vector = t2;
+        break;
 
-		case 3:                       // Sector D
+        case 3:                       // Sector D
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) half_t1;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		sampling_critical_vector = t1;
-		break;
+        sampling_critical_vector = t1;
+        break;
 
-		case 4:                       // Sector E
+        case 4:                       // Sector E
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		sampling_critical_vector = t2;
-		break;
+        sampling_critical_vector = t2;
+        break;
 
-		case 5:                       // Sector F
+        case 5:                       // Sector F
 
-		SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1nt2;
-		SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
+        SVPWM.ccu8_phu_module_ptr->CR1S = (uint32_t) half_t1nt2;
+        SVPWM.ccu8_phu_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1nt2);
 
-		SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) 0;
-		SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
+        SVPWM.ccu8_phv_module_ptr->CR1S = (uint32_t) 0;
+        SVPWM.ccu8_phv_module_ptr->CR2S = (uint32_t) (pwm_period + 1);
 
-		SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1;
-		SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
+        SVPWM.ccu8_phw_module_ptr->CR1S = (uint32_t) half_t1;
+        SVPWM.ccu8_phw_module_ptr->CR2S = (uint32_t) (pwm_period - half_t1);
 
-		sampling_critical_vector = t1;
-		break;
+        sampling_critical_vector = t1;
+        break;
 
-		default:
-		// Control should not come here.
-		break;
-	}
+        default:
+        // Control should not come here.
+        break;
+    }
 }

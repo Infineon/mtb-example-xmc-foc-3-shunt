@@ -1,11 +1,9 @@
-
-
 /**
  * @file user_input_config.h
  * @brief Control algorithm parameters which user need to configure.
  * @cond
 *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -143,9 +141,10 @@
 #define  USER_MOTOR_R_PER_PHASE_OHM                 (0.36f)       /*!< Motor Resistance per phase in Ohm for PMSM Motor */
 #define  USER_MOTOR_LS_PER_PHASE_uH                 (600.0f)      /*!< Motor Inductance Ls per phase in uH  */
 #define  USER_MOTOR_POLE_PAIR                       (4.0f)        /*!< Motor Pole Pairs */
-#define  USER_SPEED_HIGH_LIMIT_RPM                  (4000U)       /*!< No load Speed of User Motor*/
-#define  USER_SPEED_LOW_LIMIT_RPM                   (200U)        /*!< Min Speed of User Motor, original 200U*/
+#define  USER_SPEED_HIGH_LIMIT_RPM                  (6500U)       /*!< No load Speed of User Motor */
+#define  USER_SPEED_LOW_LIMIT_RPM                   (200U)        /*!< Min Speed of User Motor */
 #endif
+
 
 /****************************
  * PWM group
@@ -163,11 +162,11 @@
 /****************************
  * Control Loop group
  ***************************/
-/*----------------------------------------	V/F Start Up Parameters ----------------------------------------------- */
-#define USER_VF_OFFSET_V                            (0.5f)		   /*!< V/F open loop - offset in V */
-#define USER_VF_V_PER_HZ                            (0.08f) 	   /*!< V/F open loop - (V/F) constant */
-#define USER_VF_TRANSITION_SPEED_RPM                (500)		   /*!< threshold Speed to transit from Open loop to closed loop */
-#define USER_VF_SPEED_RAMPUP_RATE_RPM_PER_S         (100U)		   /*!< V/F open loop - speed ramp up rate */
+/*----------------------------------------  V/F Start Up Parameters ----------------------------------------------- */
+#define USER_VF_OFFSET_V                            (0.5f)         /*!< V/F open loop - offset in V */
+#define USER_VF_V_PER_HZ                            (0.04f)        /*!< V/F open loop - (V/F) constant */
+#define USER_VF_TRANSITION_SPEED_RPM                (500)          /*!< threshold Speed to transit from Open loop to closed loop */
+#define USER_VF_SPEED_RAMPUP_RATE_RPM_PER_S         (100U)         /*!< V/F open loop - speed ramp up rate */
 
 /* ---------------------------------------------- Vq Voltgae Control Scheme Configuration ---------------------------------------- */
 #define USER_VQ_REF_HIGH_LIMIT_V                   ((USER_VDC_LINK_V / USER_SQRT_3_CONSTANT) * 1.15)   /*!< 0 < USER_VQ_REF_HIGH_LIMIT_V <= VREF_MAX_V   VREF_MAX_V =  (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT), multiply by 1.15 to achieve overmodulation in VQ control */
@@ -175,20 +174,21 @@
 
 #define USER_VQ_RAMPUP_STEP                        (1U)                                             /*!< Vq voltage increment step in target count*/
 #define USER_VQ_RAMPDOWN_STEP                      (1U)                                             /*!< Vq voltage decrement step in target count*/
-#define USER_VQ_RAMP_SLEWRATE                      (3U)                                             /*!< USER_VQ_RAMP_SLEWRATE x PWM period, every cycle increase USER_VQ_RAMPUP or USER_VQ_RAMPDOWN */
+#define USER_VQ_RAMP_SLEWRATE                      (6U)                                             /*!< USER_VQ_RAMP_SLEWRATE x PWM period, every cycle increase USER_VQ_RAMPUP or USER_VQ_RAMPDOWN */
 
 /* ---------------------------------------------- Speed inner current Control Scheme Configuration -------------------------------- */
 #define USER_SPEED_REF_HIGH_LIMIT_RPM              (USER_SPEED_HIGH_LIMIT_RPM)          /*!< User speed reference upper limit */
 #define USER_SPEED_REF_LOW_LIMIT_RPM               (USER_SPEED_LOW_LIMIT_RPM)           /*!< User speed reference lower limit */
-#define USER_SPEED_RAMPUP_RPM_PER_S                (50U)
-#define USER_SPEED_RAMPDOWN_RPM_PER_S              (50U)
-#define USER_SPEED_RAMP_SLEWRATE                   (2U)                                 /*!< USER_SPEED_RAMP_SLEWRATE x PWM period */
+#define USER_SPEED_RAMPUP_RPM_PER_S                (300U)
+#define USER_SPEED_RAMPDOWN_RPM_PER_S              (300U)
+
 #define USER_RATIO_S                               (0U)                                 /*!< Minimum ramp up and down ratio for S-curve profile */
 
 /* --------------------------------------------------- Torque Limiter --------------------------------------------------------------- */
 #define USER_TORQUE_LIMITER                         DISABLED                            /*!< 1. ENABLED       2. DISABLED */
 #define USER_IQ_LIMIT_Q15                           (2000)                              /*!< Torque Current Component Iq limit in Q14 */
 #define USER_IQ_LIMIT_BLANKING_TIME                 (5000)                              /*!< Blanking time = x * pwm period */
+
 
 
 /* --------------------------------------------------- SVM Switching Sequences ---------------------------------------------- */
@@ -212,7 +212,7 @@
 
 /* --------------------------------------------------- BRAKING CONFIG  -------------------------------------------------- */
 #define USER_MOTOR_BRAKE_DUTY                       (90U)                                /*!< Brake duty percentage. Ex: 100 - Strong brake, 10 - Weak Brake  */
-#define USER_BRAKING_VDC_MAX_LIMIT                  (115U)                               /*!< 115% of ideal DC link voltage = Vdc maximum limit, voltage clamping during brake */
+#define USER_BRAKING_VDC_MAX_LIMIT                  (130U)                               /*!< 130% of ideal DC link voltage = Vdc maximum limit, voltage clamping during brake */
 
 /* -------------------------------------------- MicroInspector Enable/Disable  ---------------------------------------- */
 #define USER_UCPROBE_GUI                            ENABLED                              /*!< 1. ENABLED       2. DISABLED */
@@ -231,30 +231,43 @@
 
 /************************ Power board parameters **************************************************************/
 /* Power Inverter parameters */
-#define USER_VDC_LINK_V                             (24.0f) 					    /*!< Inverter DC link voltage in Volts  */
-#define USER_CURRENT_TRIP_THRESHOLD_A               (15.0f)						    /*!< threshold current for trip detection in Ampere */
-#define USER_DC_SHUNT_OHM                           (0.050f)					    /*!< DC link shunt current resistor in ohm, Not used in this board */
-#define USER_CURRENT_AMPLIFIER_GAIN                 (12.0f) 					    /*!< R_FEEDBACK (of equivalent amplifier) kohm using 6EDL7141 CS gain of 4/8/12/16*/
-#define USER_MAX_ADC_VDD_V                          (5.0f)						    /*!< VDD5, maximum voltage at ADC */
+#define USER_VDC_LINK_V                             (24.0f)                         /*!< Inverter DC link voltage in Volts  */
+#define USER_CURRENT_TRIP_THRESHOLD_A               (15.0f)                         /*!< threshold current for trip detection in Ampere */
+#define USER_DC_SHUNT_OHM                           (0.050f)                        /*!< DC link shunt current resistor in ohm, Not used in this board */
+#define USER_CURRENT_AMPLIFIER_GAIN                 (12.0f)                         /*!< R_FEEDBACK (of equivalent amplifier) kohm using 6EDL7141 CS gain of 4/8/12/16*/
+#define USER_MAX_ADC_VDD_V                          (5.0f)                          /*!< VDD5, maximum voltage at ADC */
 
 #if  (MOTOR0_PMSM_FOC_BOARD == EVAL_IMD700A_FOC_3SH)
-#define USER_R_SHUNT_OHM                            (0.010f)					    /*!< Phase shunt resistor in ohm, eval board 0.010 */
+#define USER_R_SHUNT_OHM                            (0.010f)                        /*!< Phase shunt resistor in ohm, eval board 0.010 */
 /*end of if  (MOTOR0_BLDC_SCALAR_BOARD == EVAL_IMD700A_FOC_3SH) */
 #elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
-#define USER_R_SHUNT_OHM                            (0.005f)					    /*!< Phase shunt resistor in ohm, eval board 0.005 */
+#define USER_R_SHUNT_OHM                            (0.005f)                        /*!< Phase shunt resistor in ohm, eval board 0.005 */
 #endif
 
+#define N_ESPEED_RAD_FCL                            (float)(2*PI*((float)USER_SPEED_HIGH_LIMIT_RPM/60)*USER_MOTOR_POLE_PAIR*(1/(float)USER_CCU8_PWM_FREQ_HZ))
+#define N_I_A                                       (float)((USER_MAX_ADC_VDD_V / (USER_R_SHUNT_OHM * USER_CURRENT_AMPLIFIER_GAIN)) / 2U)
+#define N_V_V                                       (float)(USER_VDC_LINK_V / USER_SQRT_3_CONSTANT)
+#define USER_PI_FLUX_BW_HZ                          (float)(USER_SPEED_HIGH_LIMIT_RPM * USER_MOTOR_POLE_PAIR / 60)
+#define USER_PI_FLUX_KP_BW                          (float)(2*PI*USER_PI_FLUX_BW_HZ*(USER_MOTOR_LS_PER_PHASE_uH*0.000001))
+#define USER_PI_FLUX_KI_BW                          (float)(2*PI*USER_PI_FLUX_BW_HZ*USER_MOTOR_R_PER_PHASE_OHM)/(USER_CCU8_PWM_FREQ_HZ)
 
+#define SPEED_RAMPUP_SLEWRATE                      (float)((float)USER_CCU8_PWM_FREQ_HZ * USER_SPEED_HIGH_LIMIT_RPM /((float)USER_SPEED_RAMPUP_RPM_PER_S*32767) + 1.0f)
+#define SPEED_RAMPDOWN_SLEWRATE                    (float)((float)USER_CCU8_PWM_FREQ_HZ * USER_SPEED_HIGH_LIMIT_RPM /((float)USER_SPEED_RAMPDOWN_RPM_PER_S*32767) + 1.0f)
+#define USER_SPEED_RAMP_SLEWRATE                   (float)(SPEED_RAMPUP_SLEWRATE > SPEED_RAMPDOWN_SLEWRATE? SPEED_RAMPUP_SLEWRATE: SPEED_RAMPDOWN_SLEWRATE)
+#define SPEED_RAMP_UP_STEP                         (int16_t)((float)USER_SPEED_RAMPUP_RPM_PER_S * 32767 * USER_SPEED_RAMP_SLEWRATE/((float)USER_SPEED_HIGH_LIMIT_RPM * USER_CCU8_PWM_FREQ_HZ))
+#define SPEED_RAMP_DOWN_STEP                       (int16_t)((float)USER_SPEED_RAMPDOWN_RPM_PER_S * 32767 * USER_SPEED_RAMP_SLEWRATE/((float)USER_SPEED_HIGH_LIMIT_RPM * USER_CCU8_PWM_FREQ_HZ))
 
+#define USER_VF_SPEED_RAMPUP_SLEWRATE              (float)((float)USER_CCU8_PWM_FREQ_HZ * USER_SPEED_HIGH_LIMIT_RPM/((float)USER_VF_SPEED_RAMPUP_RATE_RPM_PER_S * 32767) + 1.0f)
+#define USER_STARTUP_VF_V_PER_HZ_CONST              (float) (USER_VF_V_PER_HZ * USER_SPEED_HIGH_LIMIT_RPM * USER_MOTOR_POLE_PAIR * USER_SQRT_3_CONSTANT/(60.0f * USER_VDC_LINK_V)* MAX_U_Q15)
 /*----------------------------------------- PI Controller Parameters ---------------------------------------------- */
 
-#define USER_PI_SPEED_KPP                           (2000)                          /*!<  SPEED PI CTRL - Proportional gain Kp, uint16_t. */
-#define USER_PI_SPEED_KII                           (2)                             /*!<  SPEED PI CTRL - Integral gain Ki, uint16_t. */
-#define USER_PI_SPEED_SCALE_KPKII                   (8+ USER_RES_INC)               /*!<  SPEED PI CTRL - kp,ki scale, uint16_t. */
+#define USER_PI_SPEED_KP                            (6000)                          /*!<  SPEED PI CTRL - Proportional gain Kp, uint16_t. */
+#define USER_PI_SPEED_KI                            (2)                             /*!<  SPEED PI CTRL - Integral gain Ki, uint16_t. */
+#define USER_PI_SPEED_SCALE_KPKI                    (12)                            /*!<  SPEED PI CTRL - kp,ki scale, uint16_t. */
 
-#define USER_PI_PLL_KP                              (20)							/*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
-#define USER_PI_PLL_KI                              (1) 							/*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
-#define USER_PI_PLL_SCALE_KPKI                      (9) 							/*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
+#define USER_PI_PLL_KP                              (20)                            /*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
+#define USER_PI_PLL_KI                              (1)                             /*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
+#define USER_PI_PLL_SCALE_KPKI                      (9)                             /*!<  PLL PI CTRL - Proportional gain Kp, uint16_t. */
 
 /*********************************************************************************************************************
  * Below Parameters usually not required any change
@@ -280,14 +293,11 @@
 #define USER_PI_FLUX_IK_LIMIT_MAX                       (1<<(30 - USER_PI_FLUX_SCALE_KPKI))         /* (1<<30 - scale). I[k] output limit HIGH. Normally no need change. */
 
 /* -----------------------------------------PLL Estimator PI Controller Parameters ---------------------------------------- */
-#define USER_PI_PLL_IK_LIMIT_MIN                        (-(int32_t)(1U << (30U-(USER_PI_PLL_SCALE_KPKI - USER_RES_INC))))  //(-(1<<(30))) /* I[k] output limit LOW. */
-#define USER_PI_PLL_IK_LIMIT_MAX                        ((1U << (30U-(USER_PI_PLL_SCALE_KPKI - USER_RES_INC))))//           /* I[k] output limit HIGH. */
-
+#define USER_PI_PLL_IK_LIMIT_MIN                        (-(int32_t)(1U << (30U-USER_PI_PLL_SCALE_KPKI))) /* I[k] output limit LOW. */
+#define USER_PI_PLL_IK_LIMIT_MAX                        (1U << (30U-USER_PI_PLL_SCALE_KPKI))//           /* I[k] output limit HIGH. */
 
 /**************** pmsm_foc_variables_scaling ****************************************************/
 
-/* *********************************************  Increase Angle (and Speed Resolution) ***********************************************************************/
-#define USER_RES_INC                                (3U)
 
 /* *********************************************  CORDIC SCALING *********************************************************************************************/
 #define SCALEUP_MPS_K                               (8U)

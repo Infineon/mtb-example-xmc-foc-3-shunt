@@ -3,7 +3,7 @@
  * @brief SPI interface for middleware and application code
  *
  **********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -47,7 +47,6 @@
  * DATA STRUCTURE
  ********************************************************************************************************************/
 uint8_t error_SPI;
-extern SYSTEM_VAR_t SystemVar;
 
 /* SPI configuration structure */
 XMC_SPI_CH_CONFIG_t SPI_config =
@@ -154,7 +153,7 @@ uint16_t read_word_16b(uint8_t RegAddr)
   read_data = ((data_high << 8) + data_low);
   if ((addr == 0x07) && (read_data == 0x00))
   {
-	  error_SPI = 1;
+      error_SPI = 1;
   }
   return read_data;
 }

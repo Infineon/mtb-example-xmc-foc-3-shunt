@@ -3,7 +3,7 @@
  * @brief SPI communication API with 6EDL7141 registers
  *
  **********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -57,7 +57,7 @@
 #include "xmc_gpio.h"
 #include "xmc_uart.h"
 #include "../Configuration/pmsm_foc_user_input_config.h"
-#include "../Configuration/pmsm_foc_6EDL7141_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../ToolInterface/Register.h"
 
 /*********************************************************************************************************************
@@ -91,8 +91,8 @@ extern uint16_t GuiMonitor_6EDL7141_value;
 
 typedef struct
 {
-	uint8_t en_drv_level:1;
-	uint8_t nbrake_level:1;
+    uint8_t en_drv_level:1;
+    uint8_t nbrake_level:1;
 } EDL_IO_CONTROL_t;
 extern EDL_IO_CONTROL_t EdlIo;
 

@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -72,11 +72,12 @@ void PMSM_FOC_PI_Init(void)
   PMSM_FOC_SPEED_PI.ik_limit_max = PI_CONFIG.PI_SPEED_IK_LIMIT_MAX;
   PMSM_FOC_SPEED_PI.uk_limit_min = PI_CONFIG.PI_SPEED_UK_LIMIT_MIN;
   PMSM_FOC_SPEED_PI.uk_limit_max = PI_CONFIG.PI_SPEED_UK_LIMIT_MAX;
+  PMSM_FOC_SPEED_PI.uk_limit_max_scaled = (int32_t)(PMSM_FOC_SPEED_PI.uk_limit_max << PMSM_FOC_SPEED_PI.scale_kp_ki);
+  PMSM_FOC_SPEED_PI.uk_limit_min_scaled = (int32_t)(PMSM_FOC_SPEED_PI.uk_limit_min << PMSM_FOC_SPEED_PI.scale_kp_ki);
 
   PMSM_FOC_SPEED_PI.uk = 0;
   PMSM_FOC_SPEED_PI.ik = 0;
   PMSM_FOC_SPEED_PI.error = 0;
-  PMSM_FOC_SPEED_PI.sat_status = 0;
 
   /*************** Torque(Iq) PI controller  ****************************************/
   PMSM_FOC_TORQUE_PI.kp = PI_CONFIG.PI_TORQUE_KP;
@@ -87,11 +88,13 @@ void PMSM_FOC_PI_Init(void)
   PMSM_FOC_TORQUE_PI.ik_limit_max = PI_CONFIG.PI_TORQUE_IK_LIMIT_MAX;
   PMSM_FOC_TORQUE_PI.uk_limit_min = PI_CONFIG.PI_TORQUE_UK_LIMIT_MIN;
   PMSM_FOC_TORQUE_PI.uk_limit_max = PI_CONFIG.PI_TORQUE_UK_LIMIT_MAX;
+  PMSM_FOC_TORQUE_PI.uk_limit_max_scaled = (int32_t)(PMSM_FOC_TORQUE_PI.uk_limit_max << PMSM_FOC_TORQUE_PI.scale_kp_ki);
+  PMSM_FOC_TORQUE_PI.uk_limit_min_scaled = (int32_t)(PMSM_FOC_TORQUE_PI.uk_limit_min << PMSM_FOC_TORQUE_PI.scale_kp_ki);
+
 
   PMSM_FOC_TORQUE_PI.uk = 0;
   PMSM_FOC_TORQUE_PI.ik = 0;
   PMSM_FOC_TORQUE_PI.error = 0;
-  PMSM_FOC_TORQUE_PI.sat_status = 0;
 
   /**************** Flux(Id) PI controller  ******************************************/
   PMSM_FOC_FLUX_PI.kp = PI_CONFIG.PI_FLUX_KP;
@@ -102,11 +105,12 @@ void PMSM_FOC_PI_Init(void)
   PMSM_FOC_FLUX_PI.ik_limit_max = PI_CONFIG.PI_FLUX_IK_LIMIT_MAX;
   PMSM_FOC_FLUX_PI.uk_limit_min = PI_CONFIG.PI_FLUX_UK_LIMIT_MIN;
   PMSM_FOC_FLUX_PI.uk_limit_max = PI_CONFIG.PI_FLUX_UK_LIMIT_MAX;
+  PMSM_FOC_FLUX_PI.uk_limit_max_scaled = (int32_t)(PMSM_FOC_FLUX_PI.uk_limit_max << PMSM_FOC_FLUX_PI.scale_kp_ki);
+  PMSM_FOC_FLUX_PI.uk_limit_min_scaled = (int32_t)(PMSM_FOC_FLUX_PI.uk_limit_min << PMSM_FOC_FLUX_PI.scale_kp_ki);
 
   PMSM_FOC_FLUX_PI.uk = 0;
   PMSM_FOC_FLUX_PI.ik = 0;
   PMSM_FOC_FLUX_PI.error = 0;
-  PMSM_FOC_FLUX_PI.sat_status = 0;
 
   /***************** PLL Observer PI controller  **************************************/
   PMSM_FOC_PLL_PI.kp = PI_CONFIG.PI_PLL_KP;
@@ -117,9 +121,11 @@ void PMSM_FOC_PI_Init(void)
   PMSM_FOC_PLL_PI.ik_limit_max = (int32_t)PI_CONFIG.PI_PLL_IK_LIMIT_MAX;
   PMSM_FOC_PLL_PI.uk_limit_min = (int32_t)PI_CONFIG.PI_PLL_UK_LIMIT_MIN;
   PMSM_FOC_PLL_PI.uk_limit_max = (int32_t)PI_CONFIG.PI_PLL_UK_LIMIT_MAX;
+  PMSM_FOC_PLL_PI.uk_limit_max_scaled = (int32_t)(PMSM_FOC_PLL_PI.uk_limit_max << PMSM_FOC_PLL_PI.scale_kp_ki);
+  PMSM_FOC_PLL_PI.uk_limit_min_scaled = (int32_t)(PMSM_FOC_PLL_PI.uk_limit_min << PMSM_FOC_PLL_PI.scale_kp_ki);
 
   PMSM_FOC_PLL_PI.uk = 0;
   PMSM_FOC_PLL_PI.ik = 0;
   PMSM_FOC_PLL_PI.error = 0;
 
-}	/* End of pmsm_foc_pi_controller_init () */
+}   /* End of pmsm_foc_pi_controller_init () */

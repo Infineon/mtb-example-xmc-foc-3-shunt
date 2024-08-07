@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -40,6 +40,7 @@
  * HEADER FILES
  ********************************************************************************************************************/
 #include "../MIDSys/pmsm_foc_debug.h"
+#include "../Configuration/pmsm_foc_mcuhw_params.h"
 
 /*********************************************************************************************************************
  * MACROS
@@ -62,12 +63,12 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_CCU4_Debug3output(int32_t In04, uint16_t In
   /* Update CCU40.OUT0 (P1.0) duty-cycle for debug. */
   if (In10_Flag == 0U)
   {
-    Tmp_CRS = (In10 * DEBUG_PWM_PERIOD_CNTS) >> In10_N; /* In10 is a positive integer, In10 < 2^In10_N. */
+    Tmp_CRS = (int32_t)(In10 >> In10_N); /* In10 is a positive integer, In10 < 2^In10_N. */
   }
   else
   {
     /* In10 is a positive or negative integer, -2^In10_N < In10 < 2^In10_N. */
-    Tmp_CRS = ((In10 + (1U << In10_N)) * DEBUG_PWM_PERIOD_CNTS) >> (In10_N + 1U);
+    Tmp_CRS = ((In10 + (1U << In10_N))) >> (In10_N + 1U);
   }
 
   if (Tmp_CRS < 0)
@@ -75,11 +76,11 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_CCU4_Debug3output(int32_t In04, uint16_t In
     Tmp_CRS = REVERSE_CRS_OR_0;
   }
 
-  XMC_CCU4_SLICE_SetTimerCompareMatch( DEBUG_PWM_0_SLICE, Tmp_CRS);		/* Update CCU41 Shadow Compare Register. */
+  XMC_CCU4_SLICE_SetTimerCompareMatch( DEBUG_PWM_0_SLICE, Tmp_CRS);     /* Update CCU41 Shadow Compare Register. */
   XMC_CCU4_EnableShadowTransfer(DEBUG_PWM_CCU4_MODULE, (uint32_t)DEBUG_PWM_0_SLICE_SHADOW_TRANS_ENABLE_Msk);
   #endif /* (DEBUG_PWM_0_ENABLE == 1) */
 
-  #if	(DEBUG_PWM_1_ENABLE == 1U)
+  #if   (DEBUG_PWM_1_ENABLE == 1U)
   /* Update CCU40.OUT1 (P0.4) duty-cycle for debug. */
   if (In04_Flag == 0U)
   {
@@ -95,12 +96,12 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_CCU4_Debug3output(int32_t In04, uint16_t In
   {
     Tmp_CRS = REVERSE_CRS_OR_0;
   }
-  XMC_CCU4_SLICE_SetTimerCompareMatch( DEBUG_PWM_1_SLICE, Tmp_CRS);		/* Update CCU41 Shadow Compare Register. */
+  XMC_CCU4_SLICE_SetTimerCompareMatch( DEBUG_PWM_1_SLICE, Tmp_CRS);     /* Update CCU41 Shadow Compare Register. */
 
   XMC_CCU4_EnableShadowTransfer(DEBUG_PWM_CCU4_MODULE, (uint32_t)DEBUG_PWM_1_SLICE_SHADOW_TRANS_ENABLE_Msk);
 #endif /* (DEBUG_PWM_1_ENABLE == 1) */
 
-}	/* End of pmsm_foc_ccu4_debug3output () */
+}   /* End of pmsm_foc_ccu4_debug3output () */
 
 #endif /* #if((DEBUG_PWM_0_ENABLE == 1U) || (DEBUG_PWM_1_ENABLE == 1U)) */
 

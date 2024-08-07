@@ -3,7 +3,7 @@
  * @brief SPI communication API with 6EDL7141 registers
  *
  **********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -43,7 +43,7 @@
 #include "../Configuration/pmsm_foc_user_input_config.h"
 #include "../ControlModules/pmsm_foc_error_handling.h"
 #include "../ControlModules/pmsm_foc_functions.h"
-#include "../Configuration/pmsm_foc_6EDL7141_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "xmc1_flash.h"
 
 /*********************************************************************************************************************
@@ -110,7 +110,7 @@ void EDL7141_MOTOR_PARAM_set_default(void)
                           BRAKE_RECIRC_DIS << PWM_CFG_PWM_RECIRC_Pos;
   Edl7141Reg.SENSOR_CFG = HALL_DEGLITCH_0ns << SENSOR_CFG_HALL_DEGLITCH_Pos |
                           OTEMP_PROT_EN << SENSOR_CFG_OTS_DIS_Pos;
-  /*	  CS_ACTIVE_ALWAYS     << CS_TMODE_Pos; */
+  /*      CS_ACTIVE_ALWAYS     << CS_TMODE_Pos; */
   Edl7141Reg.WD_CFG =     WATCHDOG_CLOCK << WD_CFG_WD_EN_Pos |
                           WDIN_DRV << WD_CFG_WD_INSEL_Pos |
                           WDOUT_STATUS << WD_CFG_WD_FLTCFG_Pos |
@@ -149,7 +149,7 @@ void EDL7141_MOTOR_PARAM_set_default(void)
                           OCP_NEG_THR_300mV << CSAMP_CFG2_CS_OCP_NTHR_Pos |
                           OCP_FLT_LATCH_DIS << CSAMP_CFG2_CS_OCP_LATCH_Pos |
                           CS_SENSE_SHUNT_RES << CSAMP_CFG2_CS_MODE_Pos |
-						  OCP_FLT_BRAKE_DIS << CSAMP_CFG2_CS_OCP_BRAKE_Pos |
+                          OCP_FLT_BRAKE_DIS << CSAMP_CFG2_CS_OCP_BRAKE_Pos |
                           OCP_PWM_TRUNC_DIS << CSAMP_CFG2_CS_TRUNC_DIS_Pos | /* OCP_PWM_TRUNC_EN_POS: Enable cycle-by-cycle current limit */
                           CS_VREF_INT << CSAMP_CFG2_VREF_INSEL_Pos |
                           OCP_NEG_EN << CSAMP_CFG2_CS_NEG_OCP_DIS_Pos |
@@ -345,14 +345,14 @@ void EDL7141_Update(void)
   }
   else
   {
-	  if (MotorVar.error_status != 0)
-	  {
-		  XMC_GPIO_SetOutputLow(GPIO_nBRAKE); /* if error present, nbrake should apply even when GUI did not apply brake*/
-	  }
-	  else
-	  {
-		  XMC_GPIO_SetOutputHigh(GPIO_nBRAKE);
-	  }
+      if (MotorVar.error_status != 0)
+      {
+          XMC_GPIO_SetOutputLow(GPIO_nBRAKE); /* if error present, nbrake should apply even when GUI did not apply brake*/
+      }
+      else
+      {
+          XMC_GPIO_SetOutputHigh(GPIO_nBRAKE);
+      }
   }
 }
 #endif //(GUI_6EDL7141_INTEGRATION != DISABLED)

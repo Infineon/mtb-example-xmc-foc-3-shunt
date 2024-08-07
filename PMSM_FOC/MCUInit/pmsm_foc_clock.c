@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -49,20 +49,20 @@
  */
 XMC_SCU_CLOCK_CONFIG_t Clock_Config =
 {
-	#if(UC_SERIES == XMC14)
-		.fdiv       = 0U,  /**< 8/10 Bit Fractional divider */
-		.idiv       = 1U,  /**< 8 Bit integer divider */
+    #if(UC_SERIES == XMC14)
+        .fdiv       = 0U,  /**< 8/10 Bit Fractional divider */
+        .idiv       = 1U,  /**< 8 Bit integer divider */
 
-		.dclk_src   = XMC_SCU_CLOCK_DCLKSRC_DCO1,
-		.oschp_mode = XMC_SCU_CLOCK_OSCHP_MODE_DISABLED,
-		.osclp_mode = XMC_SCU_CLOCK_OSCLP_MODE_DISABLED,
-		.pclk_src   = XMC_SCU_CLOCK_PCLKSRC_DOUBLE_MCLK,
-		.rtc_src    = XMC_SCU_CLOCK_RTCCLKSRC_DCO2
-	#else
-		.idiv       = 0x01U,
-		.pclk_src   = XMC_SCU_CLOCK_PCLKSRC_DOUBLE_MCLK,
-		.rtc_src    = XMC_SCU_CLOCK_RTCCLKSRC_DCO2
-	#endif
+        .dclk_src   = XMC_SCU_CLOCK_DCLKSRC_DCO1,
+        .oschp_mode = XMC_SCU_CLOCK_OSCHP_MODE_DISABLED,
+        .osclp_mode = XMC_SCU_CLOCK_OSCLP_MODE_DISABLED,
+        .pclk_src   = XMC_SCU_CLOCK_PCLKSRC_DOUBLE_MCLK,
+        .rtc_src    = XMC_SCU_CLOCK_RTCCLKSRC_DCO2
+    #else
+        .idiv       = 0x01U,
+        .pclk_src   = XMC_SCU_CLOCK_PCLKSRC_DOUBLE_MCLK,
+        .rtc_src    = XMC_SCU_CLOCK_RTCCLKSRC_DCO2
+    #endif
 };
 
 /***********************************************************************************************************************
@@ -78,22 +78,22 @@ uint32_t MCUResetStatus;    // Global variable. MCU Reset Status Information, re
 /* API to initialize clock module and read reset status */
 void PMSM_FOC_Clock_Init(void)
 {
-	uint32_t reset_status;
+    uint32_t reset_status;
 
-	/* Reset status, get reason of last reset */
-	reset_status = XMC_SCU_RESET_GetDeviceResetReason();
+    /* Reset status, get reason of last reset */
+    reset_status = XMC_SCU_RESET_GetDeviceResetReason();
 
-	/* Record MCU Reset Status Information by a global variable */
-	MCUResetStatus = reset_status;
+    /* Record MCU Reset Status Information by a global variable */
+    MCUResetStatus = reset_status;
 
-	/* Clear reset status, to ensure a clear indication of cause of next reset */
-	XMC_SCU_RESET_ClearDeviceResetReason();
+    /* Clear reset status, to ensure a clear indication of cause of next reset */
+    XMC_SCU_RESET_ClearDeviceResetReason();
 
-	/* Enable reset triggered by critical events: Flash ECC error, loss of clock, 16kbytes SRAM parity error
-	 * (comment out SRAM parity error to prevent system reset trigger by GUI reading MC_INFO variables) */
-	XMC_SCU_RESET_EnableResetRequest((uint32_t)XMC_SCU_RESET_REQUEST_FLASH_ECC_ERROR | (uint32_t)XMC_SCU_RESET_REQUEST_CLOCK_LOSS );
+    /* Enable reset triggered by critical events: Flash ECC error, loss of clock, 16kbytes SRAM parity error
+     * (comment out SRAM parity error to prevent system reset trigger by GUI reading MC_INFO variables) */
+    XMC_SCU_RESET_EnableResetRequest((uint32_t)XMC_SCU_RESET_REQUEST_FLASH_ECC_ERROR | (uint32_t)XMC_SCU_RESET_REQUEST_CLOCK_LOSS );
 
-	/* 32MHz MCLK, PCLK = 2 x MCLK = 64MHz, RTC clock is standby clock, Counter Adjustment = 1024 clock cycles */
-	XMC_SCU_CLOCK_Init(&Clock_Config);
+    /* 32MHz MCLK, PCLK = 2 x MCLK = 64MHz, RTC clock is standby clock, Counter Adjustment = 1024 clock cycles */
+    XMC_SCU_CLOCK_Init(&Clock_Config);
 
 }

@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -68,7 +68,7 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VqVoltageCtrl(void)
     /* May need swap Iv and Iw, so that Motor reverses */
     if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
     {
-	  SWAP(PMSM_FOC_INPUT.i_v, PMSM_FOC_INPUT.i_w);
+      SWAP(PMSM_FOC_INPUT.i_v, PMSM_FOC_INPUT.i_w);
     }
   }
 
@@ -89,13 +89,13 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VqVoltageCtrl(void)
   /**************************************************************************************************************/
   /* Parallel computation #3 - CPU(Flux PI) and CORDIC(PMSM_FOC_PLL_ESTIMATOR) */
   /**************************************************************************************************************/
-  PMSM_FOC_PLL_Vref(PMSM_FOC_OUTPUT.car2pol.vref32, &PMSM_FOC_PLL_ESTIMATOR);
+  PMSM_FOC_PLL_Vref(PMSM_FOC_OUTPUT.car2pol.vref32, &PMSM_FOC_PLL_ESTIMATOR, &PMSM_FOC_PLL_PI);
 
   /* For constant Vq reference DQ decoupling is done only for the Flux PI current(Id) control output. */
   if(MotorParam.DQ_DECOUPLING == ENABLED)
   {
   /* Cross coupling components for Flux & Torque PI control */
-  int32_t pll_estimated_speed = (PMSM_FOC_PLL_ESTIMATOR.rotor_speed >> PMSM_FOC_PLL_ESTIMATOR.res_inc);
+  int32_t pll_estimated_speed = PMSM_FOC_PLL_ESTIMATOR.rotor_speed;
 
   PMSM_FOC_OUTPUT.decoupling_id = -(((pll_estimated_speed * (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_Ls))
       * (PMSM_FOC_OUTPUT.park_transform.torque_iq)) >> (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_scale));
@@ -110,8 +110,8 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_VqVoltageCtrl(void)
 #if defined (__ICCARM__)
 #pragma diag_suppress=Ta023
 #endif
-	PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_id, PMSM_FOC_OUTPUT.park_transform.flux_id,
-	        PMSM_FOC_OUTPUT.decoupling_id, &PMSM_FOC_FLUX_PI);
+    PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_id, PMSM_FOC_OUTPUT.park_transform.flux_id,
+            PMSM_FOC_OUTPUT.decoupling_id, &PMSM_FOC_FLUX_PI);
 #if defined (__ICCARM__)
 #pragma diag_default=Ta023
 #endif

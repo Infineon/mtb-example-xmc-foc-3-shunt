@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -41,7 +41,7 @@
  **********************************************************************************************************************/
 #include "../Configuration/pmsm_foc_user_input_config.h"
 #include "Register.h"
-#include "../Configuration/pmsm_foc_6EDL7141_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../MCUInit/6EDL_gateway.h"
 #include "../Configuration/pmsm_foc_mcuhw_params.h"
 #include "../Configuration/pmsm_foc_common.h"
@@ -62,7 +62,7 @@ PI_CONFIG_t PI_CONFIG;
 /***********************************************************************************************************************
  * LOCAL DATA
  **********************************************************************************************************************/
-MC_INFO_t MC_INFO;			/* MC_INFO data structure */
+MC_INFO_t MC_INFO;          /* MC_INFO data structure */
 SYSTEM_VAR_t SystemVar;
 MOTOR_VAR_t MotorVar;
 MOTOR_PAR_t MotorParam;
@@ -74,10 +74,10 @@ volatile int32_t Test1, Test2, Test3, Test4;
  **********************************************************************************************************************/
 void MC_Info_init(void)
 {
-	MC_INFO.chip_id = SCU_GENERAL->IDCHIP;
-	MC_INFO.parameter_version = PARAMETER_VERSION;
-	MC_INFO.firmware_version = FIRMWARE_VERSION;
-	MC_INFO.kit_id = read_kit_id(); //0;		/* Hardware kit ID, initialize with 0 (Unidentified). After power up, firmware will read analog input to get actual kit id */
+    MC_INFO.chip_id = SCU_GENERAL->IDCHIP;
+    MC_INFO.parameter_version = PARAMETER_VERSION;
+    MC_INFO.firmware_version = FIRMWARE_VERSION;
+    MC_INFO.kit_id = read_kit_id(); //0;        /* Hardware kit ID, initialize with 0 (Unidentified). After power up, firmware will read analog input to get actual kit id */
 }
 
 
@@ -143,16 +143,15 @@ void MOTOR_PARAM_set_default(void)
 #pragma diag_suppress=Pa093
 #endif
   MotorParam.G_OPAMP_PER_PHASECURRENT = ((uint32_t) USER_CURRENT_AMPLIFIER_GAIN);
-  MotorParam.I_MAX_A = ((USER_MAX_ADC_VDD_V / (USER_R_SHUNT_OHM * USER_CURRENT_AMPLIFIER_GAIN)) / 2U);	//
+  MotorParam.I_MAX_A = ((USER_MAX_ADC_VDD_V / (USER_R_SHUNT_OHM * USER_CURRENT_AMPLIFIER_GAIN)) / 2U);  //
   MotorParam.I_MIN_A = (1.0f); /* Minimum current which can be sensed by adc */
   MotorParam.CCU8_PERIOD_REG_T = ((uint32_t) ((USER_PCLK_FREQ_MHz * 1000000) / USER_CCU8_PWM_FREQ_HZ) - 1);
   MotorParam.CCU4_PERIOD_REG = ((uint32_t) ((USER_PCLK_FREQ_MHz * 1000) / USER_CCU4_DEBUG_KHZ) - 1);
   MotorParam.DRIVERIC_DELAY = (uint32_t) ((USER_DRIVERIC_DELAY_US * USER_PCLK_FREQ_MHz) - 0.5);
   MotorParam.SPEED_REF_HIGH_LIMIT_RPM = (uint32_t) USER_SPEED_REF_HIGH_LIMIT_RPM;
   MotorParam.SPEED_REF_LOW_LIMIT_RPM = (uint32_t) USER_SPEED_REF_LOW_LIMIT_RPM;
-  MotorParam.SPEED_REF_HIGH_LIMIT_TS = (uint32_t) (((USER_SPEED_REF_HIGH_LIMIT_RPM * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60)) * (1 << (16 + USER_RES_INC)));
-  MotorParam.SPEED_REF_LOW_LIMIT_TS = (uint32_t) (((USER_SPEED_REF_LOW_LIMIT_RPM * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60)) * (1 << (16 + USER_RES_INC)));
-//	MotorParam.CCU8_DEAD_TIME = (uint32_t)(CCU8_DEADTIME_RISE + 256 * CCU8_DEADTIME_FALL);
+  MotorParam.SPEED_REF_HIGH_LIMIT_TS = (uint32_t)((1<<15)-1);
+  MotorParam.SPEED_REF_LOW_LIMIT_TS = (uint32_t)((float)USER_SPEED_LOW_LIMIT_RPM / USER_SPEED_HIGH_LIMIT_RPM * ((1<<15)-1));
   MotorParam.CCU8_DEADTIME_RISE_T = (uint32_t) ((USER_DEAD_TIME_US * USER_PCLK_FREQ_MHz) - 0.5);
   MotorParam.CCU8_DEADTIME_FALL_T = (uint32_t) ((USER_DEAD_TIME_US * USER_PCLK_FREQ_MHz) - 0.5);
   MotorParam.PMSM_FOC_SYSTICK_COUNT_T = (USER_MCLK_FREQ_MHz * USER_SLOW_CTRL_LOOP_PERIOD_uS);
@@ -160,14 +159,13 @@ void MOTOR_PARAM_set_default(void)
   MotorParam.MOTOR_BRAKE_DUTY_VAL = (uint32_t) ((USER_MOTOR_BRAKE_DUTY * (((USER_PCLK_FREQ_MHz * 1000000) / USER_CCU8_PWM_FREQ_HZ) - 1)) / 100);
   MotorParam.PWM_PERIOD_TS_US = (1000000.0f / USER_CCU8_PWM_FREQ_HZ);
   MotorParam.BOOTSTRAP_BRAKE_TIME = (uint32_t) ((USER_BOOTSTRAP_PRECHARGE_TIME_MS * 1000) / (MotorParam.PWM_PERIOD_TS_US));
-  MotorParam.STARTUP_VF_TRANSITION_SPEED =
-      (uint32_t) (((USER_VF_TRANSITION_SPEED_RPM * (1U << 16U) * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60.0f)) * (1 << USER_RES_INC));
+  MotorParam.STARTUP_VF_TRANSITION_SPEED = (uint32_t) (float)(USER_VF_TRANSITION_SPEED_RPM * 32767 / (float)USER_SPEED_HIGH_LIMIT_RPM);
   MotorParam.N_VREF_SVM_V = (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT);
-  MotorParam.STARTUP_VF_OFFSET = (uint32_t) ((USER_VF_OFFSET_V * 32767.0f) / (MotorParam.N_VREF_SVM_V));
-  MotorParam.STARTUP_VF_V_PER_HZ_CONST = (uint32_t) (((USER_VF_V_PER_HZ * 32767.0f) / (MotorParam.N_VREF_SVM_V) * (USER_MOTOR_POLE_PAIR)) / (USER_CCU8_PWM_FREQ_HZ * 60.f)
-      * 65536.0f);
-  MotorParam.STARTUP_VF_SPEED_RAMP_UP_RATE = (uint32_t) (USER_CCU8_PWM_FREQ_HZ
-      / (((USER_VF_SPEED_RAMPUP_RATE_RPM_PER_S * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60.0f)) * (1 << (16 + USER_RES_INC))));
+  MotorParam.STARTUP_VF_OFFSET = (uint32_t) (USER_VF_OFFSET_V * 32767.0f * USER_SQRT_3_CONSTANT /USER_VDC_LINK_V);
+
+  MotorParam.STARTUP_VF_V_PER_HZ_CONST = (uint32_t) (USER_STARTUP_VF_V_PER_HZ_CONST > 1.0f? USER_STARTUP_VF_V_PER_HZ_CONST: 1.0f);
+  MotorParam.STARTUP_VF_SPEED_RAMP_UP_RATE = (uint32_t) (USER_VF_SPEED_RAMPUP_SLEWRATE);
+  MotorParam.STARTUP_VF_SPEED_RAMP_UP_STEP = (uint32_t) ((float)USER_VF_SPEED_RAMPUP_RATE_RPM_PER_S * 32767 * USER_VF_SPEED_RAMPUP_SLEWRATE/((float)USER_SPEED_HIGH_LIMIT_RPM * USER_CCU8_PWM_FREQ_HZ));
   MotorParam.STARTUP_VF_STABILIZATION_COUNT = (750U); /* After V/F ramp up Motor will wait this time before go to close loop */
   MotorParam.VQ_INITIAL_VALUE = (uint32_t) (32767U * USER_VQ_INITIAL_VALUE_V / (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT)); /* Vq value during startup */
   MotorParam.ROTOR_PRE_ALIGNMENT_VREF = (uint32_t) ((USER_ROTOR_PRE_ALIGNMENT_VOLTAGE_V * 32767.0f) / (MotorParam.N_VREF_SVM_V));
@@ -176,35 +174,32 @@ void MOTOR_PARAM_set_default(void)
   MotorParam.BASE_VOLTAGE = (uint32_t) USER_VDC_LINK_V;
   MotorParam.VADC_DCLINK_T = (uint32_t) (((USER_VDC_LINK_V * USER_VDC_LINK_DIVIDER_RATIO) / USER_MAX_ADC_VDD_V) * (1 << 12));
   MotorParam.BRAKING_VDC_MAX_LIMIT = ((uint16_t) ((MotorParam.VADC_DCLINK_T * USER_BRAKING_VDC_MAX_LIMIT) / 100)); /* only for braking usage, voltage clamping */
-  MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS = (uint32_t) (((USER_SPEED_LOW_LIMIT_RPM * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60)) * (1 << (16 + USER_RES_INC)));
-  MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS = (uint32_t) (((USER_SPEED_HIGH_LIMIT_RPM * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60)) * (1 << (16 + USER_RES_INC))); /* Electrical speed per PWM period */
+  MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS = (uint32_t)((float)USER_SPEED_LOW_LIMIT_RPM / USER_SPEED_HIGH_LIMIT_RPM * ((1<<15)-1));
+  MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS = (uint32_t)((1<<15)-1);
   MotorParam.ELECTRICAL_SPEED_FREQ_HZ = ((float) USER_SPEED_HIGH_LIMIT_RPM * USER_MOTOR_POLE_PAIR / 60);
-
   MotorParam.VQ_REF_HIGH_LIMIT = (uint32_t) (32767U * USER_VQ_REF_HIGH_LIMIT_V / (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT)); /* Max Limit for Vq reference */
-  MotorParam.VQ_REF_LOW_LIMIT = (uint32_t) (32767U * USER_VQ_REF_LOW_LIMIT_V / (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT)) /* Min Limit for Vq reference */;
-  MotorParam.RAMP_UP_SPEED = (uint32_t) (USER_CCU8_PWM_FREQ_HZ
-      / (((USER_SPEED_RAMPUP_RPM_PER_S * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60.0f)) * (1 << (16 + USER_RES_INC))));
-  MotorParam.RAMP_DOWN_SPEED = (uint32_t) (USER_CCU8_PWM_FREQ_HZ
-      / (((USER_SPEED_RAMPDOWN_RPM_PER_S * USER_MOTOR_POLE_PAIR) / (USER_CCU8_PWM_FREQ_HZ * 60.0f)) * (1 << (16 + USER_RES_INC))));
-
-  MotorParam.N_I_ALPHABETA_A = (MotorParam.I_MAX_A);
-  MotorParam.N_VREF_ALPHABETA_V = (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT);
+  MotorParam.VQ_REF_LOW_LIMIT = (uint32_t) (32767U * USER_VQ_REF_LOW_LIMIT_V / (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT));   /* Min Limit for Vq reference */
+  MotorParam.RAMP_UP_SPEED = (uint32_t)(SPEED_RAMP_UP_STEP);
+  MotorParam.RAMP_DOWN_SPEED = (uint32_t)(SPEED_RAMP_DOWN_STEP);
+  MotorParam.SPEED_RAMP_SLEWRATE = USER_SPEED_RAMP_SLEWRATE;
+  MotorParam.SPEED_TO_ANGLE_CONV_RAW = (uint32_t)((N_ESPEED_RAD_FCL/N_ESPEED_T)*(N_EROTORANGLE_T/N_EROTORANGLE_RAD));
   MotorParam.DEFAULT_SCALE_OF_L =
-      (uint32_t) (log2(
-          (((1<<16) - 1)/(MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS/(1<< USER_RES_INC)))/((((3.0f/2.0f)*2.0f*PI*USER_CCU8_PWM_FREQ_HZ) * ((float)MotorParam.N_I_ALPHABETA_A/(float)MotorParam.N_VREF_ALPHABETA_V) *(USER_MOTOR_LS_PER_PHASE_uH/1000000)/(1<<16)))));
-  MotorParam.DEFAULT_LS_SCALEDUP = ((((3.0f / 2.0f) * 2.0f * PI * USER_CCU8_PWM_FREQ_HZ) * ((float) MotorParam.N_I_ALPHABETA_A / (float) MotorParam.N_VREF_ALPHABETA_V)
-      * (USER_MOTOR_LS_PER_PHASE_uH / 1000000) / (1 << 16)) * (1 << (uint32_t) MotorParam.DEFAULT_SCALE_OF_L));
+      (uint32_t) MIN(15-ROUNDUP(log2(1.5f * N_ESPEED_RAD_FCL * USER_CCU8_PWM_FREQ_HZ * N_I_A / N_V_V * USER_MOTOR_LS_PER_PHASE_uH / 1000000 )),15);
+  MotorParam.DEFAULT_LS_SCALEDUP = ROUND(1.5f * N_ESPEED_RAD_FCL * USER_CCU8_PWM_FREQ_HZ * N_I_A / N_V_V * USER_MOTOR_LS_PER_PHASE_uH / 1000000*(1<<MotorParam.DEFAULT_SCALE_OF_L));
   MotorParam.USER_CURRENTCTRL_CUTOFF_FREQ_HZ = (MotorParam.ELECTRICAL_SPEED_FREQ_HZ);
-  MotorParam.N_I_UVW_A = (MotorParam.I_MAX_A);
-  MotorParam.N_I_DQ_A = (MotorParam.I_MAX_A);
-  MotorParam.N_V_DQ_V = (USER_VDC_LINK_V / USER_SQRT_3_CONSTANT);
-  MotorParam.BEMF_MAG_SCALING = (uint32_t) ((USER_VDC_LINK_V / USER_SQRT_3_CONSTANT) * 1024.0f * (3.0f / 2.0f) * (USER_CORDIC_MPS / CORDIC_K) / USER_MAX_ADC_VDD_V);
-  MotorParam.CORDIC_MPS_PER_K = (USER_CORDIC_MPS / CORDIC_K) * (1 << SCALEUP_MPS_K);
+  MotorParam.SPEED_TO_ANGLE_CONV_FACTOR_SCALE = ROUND(MIN((float)(14 - (int16_t)log2(MotorParam.SPEED_TO_ANGLE_CONV_RAW)),14));
+
+#if defined (__ICCARM__)
+#pragma diag_suppress=Pe186
+#endif
+    MotorParam.SPEED_TO_ANGLE_CONV_FACTOR = ROUND(MotorParam.SPEED_TO_ANGLE_CONV_RAW*(1<<MotorParam.SPEED_TO_ANGLE_CONV_FACTOR_SCALE));
+#if defined (__ICCARM__)
+#pragma diag_default=Pe186
+#endif
+
   MotorParam.CONVERT_SPEED_TO_RPM = (uint32_t) ((USER_SPEED_HIGH_LIMIT_RPM * 2048.0f) / MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS);
   MotorParam.SVM_LUTTABLE_SCALE = ((uint32_t) ((((((USER_PCLK_FREQ_MHz * 1000000) / USER_CCU8_PWM_FREQ_HZ) - 1) * 1.0f / MAX_VREF_AMPLITUDE) * 32767.0f)
       * (1 << USER_SCALE_UP_SINE_LUT)));
-
-  MotorParam.SVM_LAMDA = (1.0f / USER_INVERSE_SVM_LAMDA );
   MotorParam.KS_SCALE_SVM = ((((USER_PCLK_FREQ_MHz * 1000000) / USER_CCU8_PWM_FREQ_HZ) - 1) / MAX_VREF_AMPLITUDE);
   MotorParam.PMSM_FOC_CCU8_SYNC_START = ((uint32_t) 1 << (uint32_t) (8U + CCU8_MODULE_NUM));
 
@@ -227,18 +222,18 @@ void MOTOR_PARAM_set_default(void)
 void PI_set_default(void)
 {
   /* Speed PI Controller */
-  PI_CONFIG.PI_SPEED_KP = USER_PI_SPEED_KPP;
-  PI_CONFIG.PI_SPEED_KI = USER_PI_SPEED_KII;
-  PI_CONFIG.PI_SPEED_SCALE = USER_PI_SPEED_SCALE_KPKII;
-  PI_CONFIG.PI_SPEED_IK_LIMIT_MAX = (1<<(30));       /* (1<<30). I[k] output limit HIGH. */
-  PI_CONFIG.PI_SPEED_IK_LIMIT_MIN = (-(1<<(30)));// - USER_PI_SPEED_SCALE_KPKII)));    /* (-(1<<30 - scale)). I[k] output limit LOW. */
+  PI_CONFIG.PI_SPEED_KP = USER_PI_SPEED_KP;
+  PI_CONFIG.PI_SPEED_KI = USER_PI_SPEED_KI;
+  PI_CONFIG.PI_SPEED_SCALE = USER_PI_SPEED_SCALE_KPKI;
+  PI_CONFIG.PI_SPEED_IK_LIMIT_MAX = (1<<(30 - 0));       /* (1<<30). I[k] output limit HIGH. */
+  PI_CONFIG.PI_SPEED_IK_LIMIT_MIN = (-(1<<(30 - 0)));// - USER_PI_SPEED_SCALE_KPKI)));    /* (-(1<<30 - scale)). I[k] output limit LOW. */
   PI_CONFIG.PI_SPEED_UK_LIMIT_MAX = USER_PI_SPEED_UK_LIMIT_MAX;
   PI_CONFIG.PI_SPEED_UK_LIMIT_MIN = USER_PI_SPEED_UK_LIMIT_MIN;
-
+  
   /* Flux PI Controller */
-  PI_CONFIG.PI_FLUX_SCALE = (uint32_t)(log2((1<<15)/(((float)MotorParam.USER_CURRENTCTRL_CUTOFF_FREQ_HZ/(float)MotorParam.ELECTRICAL_SPEED_FREQ_HZ)*(MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS/(1<<USER_RES_INC))*MotorParam.DEFAULT_LS_SCALEDUP /(1<<(uint32_t)MotorParam.DEFAULT_SCALE_OF_L))));
-  PI_CONFIG.PI_FLUX_KP = (uint32_t)(((float)MotorParam.USER_CURRENTCTRL_CUTOFF_FREQ_HZ/(float)MotorParam.ELECTRICAL_SPEED_FREQ_HZ)*(MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS/(1<<USER_RES_INC))*MotorParam.DEFAULT_LS_SCALEDUP /(1<<(uint32_t)(MotorParam.DEFAULT_SCALE_OF_L- PI_CONFIG.PI_FLUX_SCALE)));
-  PI_CONFIG.PI_FLUX_KI = (uint32_t)((((float)MotorParam.USER_CURRENTCTRL_CUTOFF_FREQ_HZ/(float)MotorParam.ELECTRICAL_SPEED_FREQ_HZ)*(MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS/(1<<USER_RES_INC)) * (float)USER_MOTOR_R_PER_PHASE_OHM /USER_CCU8_PWM_FREQ_HZ)*(1<<PI_CONFIG.PI_FLUX_SCALE));
+  PI_CONFIG.PI_FLUX_SCALE = MIN((13-ROUNDUP((log2((USER_PI_FLUX_KP_BW*N_I_A/N_V_V))))),13);
+  PI_CONFIG.PI_FLUX_KP = ROUND(USER_PI_FLUX_KP_BW*N_I_A/N_V_V*(1<<PI_CONFIG.PI_FLUX_SCALE));
+  PI_CONFIG.PI_FLUX_KI = ROUND(USER_PI_FLUX_KI_BW*N_I_A/N_V_V*(1<<PI_CONFIG.PI_FLUX_SCALE));
 
   PI_CONFIG.PI_FLUX_IK_LIMIT_MAX = (1<<(30 - PI_CONFIG.PI_FLUX_SCALE));       /* (1<<30 - scale). I[k] output limit HIGH. Normally no need change. */
   PI_CONFIG.PI_FLUX_IK_LIMIT_MIN = (-(1<<(30 - PI_CONFIG.PI_FLUX_SCALE)));    /* (-(1<<30)). I[k] output limit LOW. Normally no need change. */
@@ -259,54 +254,54 @@ void PI_set_default(void)
   PI_CONFIG.PI_PLL_KP = USER_PI_PLL_KP;
   PI_CONFIG.PI_PLL_KI = USER_PI_PLL_KI;
   PI_CONFIG.PI_PLL_SCALE = USER_PI_PLL_SCALE_KPKI;
-  PI_CONFIG.PI_PLL_IK_LIMIT_MAX = ((1U << (30U-(USER_PI_PLL_SCALE_KPKI - USER_RES_INC))));               //            /* I[k] output limit HIGH. */
-  PI_CONFIG.PI_PLL_IK_LIMIT_MIN = (-(int32_t)(1U << (30U-(USER_PI_PLL_SCALE_KPKI - USER_RES_INC))));  //(-(1<<(30))) /* I[k] output limit LOW. */
+  PI_CONFIG.PI_PLL_IK_LIMIT_MAX = USER_PI_PLL_IK_LIMIT_MAX;          /* I[k] output limit HIGH. */
+  PI_CONFIG.PI_PLL_IK_LIMIT_MIN = USER_PI_PLL_IK_LIMIT_MIN;          /* I[k] output limit LOW. */  PI_CONFIG.PI_PLL_UK_LIMIT_MAX = MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS+3000;
   PI_CONFIG.PI_PLL_UK_LIMIT_MAX = MotorParam.ELECTRICAL_SPEED_HIGH_LIMIT_TS+3000;
-  PI_CONFIG.PI_PLL_UK_LIMIT_MIN = MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS;
+  PI_CONFIG.PI_PLL_UK_LIMIT_MIN = MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS>>1;
 
 }
 
 void FLASH_Parameter_load(void)
 {
-	/* MC_INFO structure contains expected parameter version for the firmware. Head of parameter block should contain
-	 * same value, otherwise parameter block won't be loaded
-	 */
+    /* MC_INFO structure contains expected parameter version for the firmware. Head of parameter block should contain
+     * same value, otherwise parameter block won't be loaded
+     */
 #if (PROGRAM_DEFAULT_PARAM == 1)
-//		uint32_t *motor_PI_config_addr = PMSM_SL_FOC_UCPROBE_CONFIG_ADDR;
+//      uint32_t *motor_PI_config_addr = PMSM_SL_FOC_UCPROBE_CONFIG_ADDR;
 
-    	MOTOR_PARAM_set_default();  /* configure MotorParam parameters*/
-		XMC_FLASH_ProgramVerifyPage(ParameterBlock_Addr, (uint32_t *)&MotorParam);
+        MOTOR_PARAM_set_default();  /* configure MotorParam parameters*/
+        XMC_FLASH_ProgramVerifyPage(ParameterBlock_Addr, (uint32_t *)&MotorParam);
 
-		PI_set_default(); /* configure PI parameters */
-		XMC_FLASH_ProgramVerifyPage(motor_PI_config_addr, (uint32_t *)&PI_CONFIG);
-		SystemVar.ParamConfigured = 1;
+        PI_set_default(); /* configure PI parameters */
+        XMC_FLASH_ProgramVerifyPage(motor_PI_config_addr, (uint32_t *)&PI_CONFIG);
+        SystemVar.ParamConfigured = 1;
 #else
-	uint16_t parameter_version = (uint16_t)*ParameterBlock_Addr;
-	if (parameter_version != MC_INFO.parameter_version)     /* if there is no valid parameter block, do nothing */
-	{
-		SystemVar.ParamConfigured = 0;
-	}
-	else	/* Restore parameter block in flash into MotorParam structure */
-	{
-		uint8_t *parameter_ptr = (uint8_t *)&MotorParam;
-		uint8_t *flash_ptr = (uint8_t *)ParameterBlock_Addr;
-		for (int32_t i=0; i<PARAMETER_SIZE; i++)
-		{
-			*parameter_ptr = *flash_ptr;
-			parameter_ptr++;
-			flash_ptr++;
-		}
+    uint16_t parameter_version = (uint16_t)*ParameterBlock_Addr;
+    if (parameter_version != MC_INFO.parameter_version)     /* if there is no valid parameter block, do nothing */
+    {
+        SystemVar.ParamConfigured = 0;
+    }
+    else    /* Restore parameter block in flash into MotorParam structure */
+    {
+        uint8_t *parameter_ptr = (uint8_t *)&MotorParam;
+        uint8_t *flash_ptr = (uint8_t *)ParameterBlock_Addr;
+        for (int32_t i=0; i<PARAMETER_SIZE; i++)
+        {
+            *parameter_ptr = *flash_ptr;
+            parameter_ptr++;
+            flash_ptr++;
+        }
 
-		uint8_t *pi_conf_ptr = (uint8_t *)&PI_CONFIG;
-		uint8_t *pi_flash_ptr = (uint8_t *)PMSM_SL_FOC_PI_CONFIG_ADDR;
-		for (int32_t i=0; i<PI_CONFIG_SIZE; i++)
-		{
-			*pi_conf_ptr = *pi_flash_ptr;
-			pi_conf_ptr++;
-			pi_flash_ptr++;
-		}
-		SystemVar.ParamConfigured = 1;
-	}
+        uint8_t *pi_conf_ptr = (uint8_t *)&PI_CONFIG;
+        uint8_t *pi_flash_ptr = (uint8_t *)PMSM_SL_FOC_PI_CONFIG_ADDR;
+        for (int32_t i=0; i<PI_CONFIG_SIZE; i++)
+        {
+            *pi_conf_ptr = *pi_flash_ptr;
+            pi_conf_ptr++;
+            pi_flash_ptr++;
+        }
+        SystemVar.ParamConfigured = 1;
+    }
 #endif
 }
 

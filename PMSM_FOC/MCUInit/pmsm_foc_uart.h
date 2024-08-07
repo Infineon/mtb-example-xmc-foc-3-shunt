@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -59,9 +59,9 @@
  * MACROS
  ********************************************************************************************************************/
 #if(UART_ENABLE == USIC0_CH1_P1_2_P1_3)
-#define USIC0_CHX_IN0	(USIC0_CH1->IN[0])        /* UART uses USIC0_CH1 */
-#define USIC0_CHX_TRBSR	(USIC0_CH1->TRBSR)
-#define USIC0_CHX_OUTR	(USIC0_CH1->OUTR)
+#define USIC0_CHX_IN0   (USIC0_CH1->IN[0])        /* UART uses USIC0_CH1 */
+#define USIC0_CHX_TRBSR (USIC0_CH1->TRBSR)
+#define USIC0_CHX_OUTR  (USIC0_CH1->OUTR)
 #elif(UART_ENABLE == USIC0_CH0_P1_4_P1_5)
 #define USIC0_CHX_IN0 (USIC0_CH0->IN[0])        // UART uses USIC0_CH0
 #define USIC0_CHX_TRBSR (USIC0_CH0->TRBSR)
@@ -90,7 +90,7 @@
 #define BRG_PCTQ  0UL
 
 #define UART_RATE   (3U)            /* To determine UART communication frequency. */
-#define UART_SPEED_UPDATE_RATE    (UART_RATE * 30U)	/* To determine frequency of UART speed update (for debug only). */
+#define UART_SPEED_UPDATE_RATE    (UART_RATE * 30U) /* To determine frequency of UART speed update (for debug only). */
 
 /*********************************************************************************************************************
  * API Prototypes

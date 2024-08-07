@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -84,7 +84,7 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_FCL_ISR(void)
 
   /* Debug purpose only */
   #if ((DEBUG_PWM_0_ENABLE == 1U) || (DEBUG_PWM_1_ENABLE == 1U))
-  PMSM_FOC_CCU4_Debug3output(PMSM_FOC_INPUT.i_u,1,5, PMSM_FOC_OUTPUT.rotor_angle_q31, 1, 10);
+  PMSM_FOC_CCU4_Debug3output(PMSM_FOC_OUTPUT.rotor_angle_q31, 1, 10, PMSM_FOC_OUTPUT.rotor_angle_q31, 1, 16);
   #endif
 
   /* ucProbe sampling function for ucProbe oscilloscope feature */

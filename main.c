@@ -7,7 +7,7 @@
  *
  *
  *******************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -53,15 +53,17 @@
 /***********************************************************************************************************************
  * HEADER FILES
  **********************************************************************************************************************/
-#include <PMSM_FOC/Configuration/pmsm_foc_user_input_config.h>
 #include <xmc_common.h>
-#include "../PMSM_FOC/Configuration/pmsm_foc_mcuhw_params.h"
-#include "../PMSM_FOC/MIDSys/pmsm_foc_debug.h"
-#include "../PMSM_FOC/ControlModules/pmsm_foc_functions.h"
-#include "../PMSM_FOC/ToolInterface/Register.h"
-#include "../PMSM_FOC/MCUInit/6EDL_gateway.h"
+#include "PMSM_FOC/ControlModules/pmsm_foc_state_machine.h"
 #include "cybsp.h"
 #include "cy_utils.h"
+#include "PMSM_FOC/Configuration/pmsm_foc_mcuhw_params.h"
+#include "PMSM_FOC/Configuration/pmsm_foc_user_input_config.h"
+#include "PMSM_FOC/ControlModules/pmsm_foc_functions.h"
+#include "PMSM_FOC/MCUInit/6EDL_gateway.h"
+#include "PMSM_FOC/MIDSys/pmsm_foc_debug.h"
+#include "PMSM_FOC/ToolInterface/Register.h"
+
 
 
 /*********************************************************************************************************************
@@ -94,7 +96,7 @@ int main(void)
   cy_rslt_t result = cybsp_init();
   if (result != CY_RSLT_SUCCESS)
   {
-	  CY_ASSERT(0);
+      CY_ASSERT(0);
   }
   /* Reset status bits */
 
@@ -120,7 +122,7 @@ int main(void)
 
   /* Put motor control state machine to IDLE state */
   idle_state_delay_counter = 0;
-  PMSM_FOC_CTRL.msm_state = (1 << 6);//PMSM_FOC_MSM_IDLE;
+  PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_IDLE;
 
   /* Initializes systick at 1ms - this will start the state machine interrupt */
   SystemVar.GlobalTimer = 0; /* reset timer */

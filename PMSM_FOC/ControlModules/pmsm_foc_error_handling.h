@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -89,11 +89,11 @@ typedef enum PMSM_FOC_EID
  * API Prototypes
  **********************************************************************************************************************/
 /**
- * @brief	Check if any errors are cleared and change the control accordingly.
+ * @brief   Check if any errors are cleared and change the control accordingly.
  *
- * @param	None
+ * @param   None
  *
- * @retval	None
+ * @retval  None
  */
 void PMSM_FOC_ErrorHandling(void);
 

@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -170,7 +170,7 @@ __STATIC_INLINE void PMSM_FOC_MSM_CLOSED_LOOP_Func(void)
   PMSM_FOC_CTRL.ctrl_scheme_fun_ptr();
 
 #if(USER_VDC_VOLT_COMPENSATION == ENABLED)
-#define COMPENSATION_FACTOR              (4U)	/* 0 to 8, adjustable for best performance */
+#define COMPENSATION_FACTOR              (4U)   /* 0 to 8, adjustable for best performance */
   /* Unsigned mode,After division the result will be shifted by COMPENSATION_FACTOR */
   MATH->DIVCON = (0x00008004 | (COMPENSATION_FACTOR << MATH_DIVCON_QSCNT_Pos));
   MATH->DVD = PMSM_FOC_OUTPUT.svm_vref_16 * (MotorParam.VADC_DCLINK_T << COMPENSATION_FACTOR); // Dividend
@@ -208,13 +208,13 @@ __STATIC_INLINE void PMSM_FOC_MSM_STOP_MOTOR_Func(void)
     if (SYSTEM_BE_IDLE)
     {
       /* If system is idle, i.e.: Reference or POT ADC too low.*/
-    	/* if user modify dead time value, the value is updated here  */
-    	CCU8_SLICE_PHASE_U->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
-    			            MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
-    	CCU8_SLICE_PHASE_V->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
-    	    			    MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
-    	CCU8_SLICE_PHASE_W->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
-    	    			    MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
+        /* if user modify dead time value, the value is updated here  */
+        CCU8_SLICE_PHASE_U->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
+                            MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
+        CCU8_SLICE_PHASE_V->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
+                            MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
+        CCU8_SLICE_PHASE_W->DC1R = MotorParam.CCU8_DEADTIME_RISE_T << CCU8_CC8_DC1R_DT1R_Pos |
+                            MotorParam.CCU8_DEADTIME_FALL_T << CCU8_CC8_DC1R_DT1F_Pos;
     }
     else
     {
@@ -288,15 +288,15 @@ __STATIC_INLINE void PMSM_FOC_MSM_PRE_POSITIONING_Func(void)
     PMSM_FOC_OUTPUT.rotor_angle_q31 = PMSM_FOC_ANGLE_000_DEGREE_Q31;
     PMSM_FOC_VADC_PhCurrentInit();
 
-	if((MotorParam.StartupMethod == MOTOR_STARTUP_DIRECT_FOC) && (MotorParam.ControlScheme != VF_OPEN_LOOP_CTRL))
-	{
-		PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_CLOSED_LOOP;
-	}
-	else
-	{
-		/* V/F open loop initialization */
-		PMSM_FOC_VF_OpenLoopInit();
-	}
+    if((MotorParam.StartupMethod == MOTOR_STARTUP_DIRECT_FOC) && (MotorParam.ControlScheme != VF_OPEN_LOOP_CTRL))
+    {
+        PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_CLOSED_LOOP;
+    }
+    else
+    {
+        /* V/F open loop initialization */
+        PMSM_FOC_VF_OpenLoopInit();
+    }
   }
 }
 
@@ -319,7 +319,8 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
   PMSM_FOC_ClarkeTransform(PMSM_FOC_INPUT.i_u, PMSM_FOC_INPUT.i_v, PMSM_FOC_INPUT.i_w, &PMSM_FOC_OUTPUT.clarke_tansform);
 
   /* Update V/f voltage amplitude, Vref = Offset + Kω. */
-  handle_ptr->vref_mag = handle_ptr->vf_offset + ((handle_ptr->vf_constant * handle_ptr->vf_motor_speed) >> PMSM_FOC_PLL_ESTIMATOR.res_inc);
+  handle_ptr->vref_mag = ((handle_ptr->vf_constant * handle_ptr->vf_motor_speed)>>15);
+  handle_ptr->vref_mag += handle_ptr->vf_offset;
 
   /* Limit vref */
   if (handle_ptr->vref_mag > MAX_U_Q15)
@@ -329,23 +330,23 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
   }
 
   /* θ[k] = θ[k-1] + ω[k]. */
-  handle_ptr->vref_angle += (handle_ptr->vf_motor_speed >> PMSM_FOC_PLL_ESTIMATOR.res_inc); /* θ[k] = θ[k-1] + ω[k]. */
+   handle_ptr->vref_angle += ((int32_t)((handle_ptr->vf_motor_speed * handle_ptr->speed_angle_conversion_factor)>>handle_ptr->speed_angle_conversion_factor_scale) >> 16);
 
   if (PMSM_FOC_CTRL.transition_status == PMSM_FOC_MOTOR_STATUS_TRANSITION)
   {
     /* check if motor speed is reached to transition speed */
     if (handle_ptr->vf_motor_speed < handle_ptr->vf_transition_speed)
     {
-      /* Speed ramp counter ++. */
-      handle_ptr->vf_speed_ramp_counter++;
+        /* Speed ramp counter ++. */
+        handle_ptr->vf_speed_ramp_counter++;
 
-      if (handle_ptr->vf_speed_ramp_counter > handle_ptr->vf_speed_ramp_up_rate)
-      {
-        /* Increment motor speed. */
-        handle_ptr->vf_motor_speed++;
+        if (handle_ptr->vf_speed_ramp_counter > handle_ptr->vf_speed_ramp_up_rate)
+        {
+          /* Increment motor speed. */
+          handle_ptr->vf_motor_speed += handle_ptr->vf_speed_ramp_up_step;
 
-        /* Clear ramp counter.*/
-        handle_ptr->vf_speed_ramp_counter = 0;
+          /* Clear ramp counter.*/
+          handle_ptr->vf_speed_ramp_counter = 0;
       }
     }
     else
@@ -366,8 +367,8 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
   else
   {
     /* Init rotor angle for first FOC PWM cycle, Lag/lead current angle γ by a 90° angle. */
-    PMSM_FOC_PLL_ESTIMATOR.rotor_angle_q31 = ((handle_ptr->vref_angle << 16) - PMSM_FOC_ANGLE_090_DEGREE_Q31)
-        + (handle_ptr->vf_motor_speed << (16U - PMSM_FOC_PLL_ESTIMATOR.res_inc));
+    PMSM_FOC_PLL_ESTIMATOR.rotor_angle_q31 = handle_ptr->vref_angle - PMSM_FOC_ANGLE_090_DEGREE_Q31
+        + (int32_t)((handle_ptr->vf_motor_speed * handle_ptr->speed_angle_conversion_factor)>>handle_ptr->speed_angle_conversion_factor_scale);
 
     /* To init PI controllers' Ik for first FOC PWM cycle. */
 #if defined (__ICCARM__)
@@ -390,7 +391,7 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
     /* Check if user control scheme if speed_currrent control, it need to enter Vq control first, then transit to speed_current coontrol */
     if (PMSM_FOC_INPUT.user_ctrl_scheme == SPEED_INNER_CURRENT_CTRL_SCHEME)
     {
-    	PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_TRANSITION;
+        PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_TRANSITION;
     }
 
   }
@@ -403,7 +404,10 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
   }
 
   /* Assign open loop speed to FOC output */
-  PMSM_FOC_OUTPUT.rotor_speed = handle_ptr->vf_motor_speed;
+  //PMSM_FOC_OUTPUT.rotor_speed = (int32_t)((handle_ptr->vf_motor_speed*(int32_t)handle_ptr->openloop_to_closedloop_conv_factor)>>handle_ptr->openloop_to_closedloop_conv_factor_scale);
+    PMSM_FOC_OUTPUT.rotor_speed = handle_ptr->vf_motor_speed;
+
+
   /*  Update SVM PWM. */
   PMSM_FOC_SVPWM_Update(handle_ptr->vref_mag, handle_ptr->vref_angle);
 }
@@ -422,6 +426,9 @@ __STATIC_INLINE void PMSM_FOC_MSM_BRAKE_BOOTSTRAP_Func(void)
 {
   uint32_t brake_cmp_val_1;
   uint32_t brake_cmp_val_2;
+
+  /* set PMSM_FOC_INPUT.ref_speed to 0 while braking in speed inner current control scheme */
+  if (PMSM_FOC_CTRL.ctrl_scheme_fun_ptr == &PMSM_FOC_SpeedCurrentCtrl) PMSM_FOC_INPUT.ref_speed=0;
 
   if (PMSM_FOC_CTRL.braking_counter == 0)
   {

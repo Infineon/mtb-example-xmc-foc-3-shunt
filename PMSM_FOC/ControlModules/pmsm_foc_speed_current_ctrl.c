@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -65,10 +65,10 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_SpeedCurrentCtrl(void)
 
   /* If Motor direction change then swap the current readings */
   if (MotorParam.BiDirectional == ENABLED)
-	  if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
-	  {
-		SWAP(PMSM_FOC_INPUT.i_v,PMSM_FOC_INPUT.i_w);
-	  }
+      if (PMSM_FOC_CTRL.rotation_dir == DIRECTION_DEC)
+      {
+        SWAP(PMSM_FOC_INPUT.i_v,PMSM_FOC_INPUT.i_w);
+      }
 
 
   /* Clarke transform  - Execute on CPU */
@@ -100,18 +100,18 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_SpeedCurrentCtrl(void)
   /* CPU -  Torque(Iq) PI Control */
   if (SVPWM.invalid_current_sample_flag == 0U)
   {
-	  /* CPU - Decoupling Flux and Torque PI Control */
-	  if(MotorParam.DQ_DECOUPLING == ENABLED)
-	  {
-		  /* Cross coupling components for Flux & Torque PI control */
-		  int32_t pll_estimated_speed = (PMSM_FOC_PLL_ESTIMATOR.rotor_speed >> PMSM_FOC_PLL_ESTIMATOR.res_inc);
-		  PMSM_FOC_OUTPUT.decoupling_id   = -(((pll_estimated_speed * (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_Ls)) * (PMSM_FOC_OUTPUT.park_transform.torque_iq)) >> (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_scale));
-		  PMSM_FOC_OUTPUT.decoupling_iq = (((pll_estimated_speed * (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_Ls)) * (PMSM_FOC_OUTPUT.park_transform.flux_id)) >> (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_scale));
-	  }
+      /* CPU - Decoupling Flux and Torque PI Control */
+      if(MotorParam.DQ_DECOUPLING == ENABLED)
+      {
+          /* Cross coupling components for Flux & Torque PI control */
+          int32_t pll_estimated_speed = PMSM_FOC_PLL_ESTIMATOR.rotor_speed;
+          PMSM_FOC_OUTPUT.decoupling_id   = -(((pll_estimated_speed * (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_Ls)) * (PMSM_FOC_OUTPUT.park_transform.torque_iq)) >> (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_scale));
+          PMSM_FOC_OUTPUT.decoupling_iq = (((pll_estimated_speed * (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_Ls)) * (PMSM_FOC_OUTPUT.park_transform.flux_id)) >> (PMSM_FOC_PLL_ESTIMATOR.phase_inductance_scale));
+      }
 #if defined (__ICCARM__)
 #pragma diag_suppress=Ta023
 #endif
-	  PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_iq, PMSM_FOC_OUTPUT.park_transform.torque_iq, PMSM_FOC_OUTPUT.decoupling_iq, &PMSM_FOC_TORQUE_PI);
+      PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_iq, PMSM_FOC_OUTPUT.park_transform.torque_iq, PMSM_FOC_OUTPUT.decoupling_iq, &PMSM_FOC_TORQUE_PI);
 #if defined (__ICCARM__)
 #pragma diag_default=Ta023
 #endif
@@ -125,7 +125,7 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_SpeedCurrentCtrl(void)
   /* Parallel computation #3 - CPU(Flux PI) and CORDIC(PMSM_FOC_PLL_ESTIMATOR) */
   /**************************************************************************************************************/
   /* CORDIC - Vref*Cos(theta - phi) */
-  PMSM_FOC_PLL_Vref(PMSM_FOC_OUTPUT.car2pol.vref32,&PMSM_FOC_PLL_ESTIMATOR);
+  PMSM_FOC_PLL_Vref(PMSM_FOC_OUTPUT.car2pol.vref32,&PMSM_FOC_PLL_ESTIMATOR, &PMSM_FOC_PLL_PI);
 
   /* CPU - Flux PI Controller */
   if(SVPWM.invalid_current_sample_flag == 0U)
@@ -133,11 +133,11 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_SpeedCurrentCtrl(void)
 #if defined (__ICCARM__)
 #pragma diag_suppress=Ta023
 #endif
-	  PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_id, PMSM_FOC_OUTPUT.park_transform.flux_id, PMSM_FOC_OUTPUT.decoupling_id, &PMSM_FOC_FLUX_PI);
+      PMSM_FOC_PI_AntiWindup(PMSM_FOC_INPUT.ref_id, PMSM_FOC_OUTPUT.park_transform.flux_id, PMSM_FOC_OUTPUT.decoupling_id, &PMSM_FOC_FLUX_PI);
 #if defined (__ICCARM__)
 #pragma diag_default=Ta023
 #endif
-	  PMSM_FOC_OUTPUT.flux_vd = PMSM_FOC_FLUX_PI.uk;
+      PMSM_FOC_OUTPUT.flux_vd = PMSM_FOC_FLUX_PI.uk;
   }
 
   /* Read CORDIC result */

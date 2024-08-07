@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -54,29 +54,30 @@ void PMSM_FOC_LinearRampGenerator(int32_t set_val, int32_t rampup_step, int32_t 
 {
   if (*reference_val != set_val)
   {
-		PMSM_FOC_CTRL.ramp_counter ++;
-		if(PMSM_FOC_CTRL.ramp_counter >= slew_rate)
-		{
-			PMSM_FOC_CTRL.ramp_counter = 0;
-			if(*reference_val < set_val)
-			{
-				*reference_val += rampup_step;
-				if(*reference_val > set_val)
-				{
-					*reference_val = set_val;
-				}
-			}
-			else
-			{
-				if((*reference_val > rampdown_step) && (ADC.adc_res_vdc < MotorParam.BRAKING_VDC_MAX_LIMIT))
-				{
-					*reference_val -= rampdown_step;
-					if(*reference_val < set_val)
-					{
-						*reference_val = set_val;
-					}
-				}
-			}
-		}
+        PMSM_FOC_CTRL.ramp_counter ++;
+        if(PMSM_FOC_CTRL.ramp_counter >= slew_rate)
+        {
+            PMSM_FOC_CTRL.ramp_counter = 0;
+            if(*reference_val < set_val)
+            {
+                *reference_val += rampup_step;
+                if(*reference_val > set_val)
+                {
+                    *reference_val = set_val;
+                }
+            }
+            else
+            {
+                if((*reference_val > rampdown_step) && (ADC.adc_res_vdc < MotorParam.BRAKING_VDC_MAX_LIMIT))
+                {
+                    *reference_val -= rampdown_step;
+                    if(*reference_val < set_val)
+                    {
+                        *reference_val = set_val;
+                    }
+                }
+            }
+        }
   }
 }
+

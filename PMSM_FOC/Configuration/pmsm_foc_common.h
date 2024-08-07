@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -134,16 +134,16 @@
 
 #define SQRT3                                       (1.732050807569f)       /* √3 */
 #define DIV_SQRT3                                   (591)                   /* ((int16_t)((1/SQRT3) * (1<<SCALE_SQRT3))) */
-#define	SCALE_SQRT3		                            (10U)
+#define SCALE_SQRT3                                 (10U)
 #define DIV_SQRT3_Q14                               (9459U)                 /* (1/√3)*2^14 */
 #define SCALE_DIV_3                                 (14U)                   /* For 1/3 scaling. */
 #define DIV_3_Q14                                   (5461U)                 /* ((int16_t)((1/3) * (1<<SCALE_DIV_3))) */
 #define DIV_SQRT2_Q14                               (11585U)                /* ((1/SQRT2) * (1<<14)) */
 
-#define PMSM_FOC_ANGLE_000_DEGREE_Q31               (0)        			    /* 0° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
+#define PMSM_FOC_ANGLE_000_DEGREE_Q31               (0)                     /* 0° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
 #define PMSM_FOC_ANGLE_030_DEGREE_Q31               (357913941)             /* 30° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
-#define PMSM_FOC_ANGLE_060_DEGREE_Q31               (715827883) 			/* 60° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
-#define PMSM_FOC_ANGLE_090_DEGREE_Q31               (1073741824)   			/* 90° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
+#define PMSM_FOC_ANGLE_060_DEGREE_Q31               (715827883)             /* 60° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
+#define PMSM_FOC_ANGLE_090_DEGREE_Q31               (1073741824)            /* 90° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
 #define PMSM_FOC_ANGLE_120_DEGREE_Q31               (1431655765)            /* 120° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
 #define PMSM_FOC_ANGLE_150_DEGREE_Q31               (1789569707)            /* 150° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
 #define PMSM_FOC_ANGLE_180_DEGREE_Q31               (2147483648)            /* 180° angle (0 ~ 2^31 represent electrical angle 0° ~ 180° in CORDIC) */
@@ -178,6 +178,13 @@
 
 #define MAX_U_Q15                                   (32767U)
 
+/**********************************************************************************************************
+ * Scaling parameters for speed to angle conversion
+ */
+#define N_ESPEED_T                                  ((1U<<15)-1)
+#define N_EROTORANGLE_RAD                           (float)PI
+#define N_EROTORANGLE_T                             ((1U<<31)-1)
+
 /*****************************************************************************************************************************************
  * Torque estimation constants
  *****************************************************************************************************************************************/
@@ -206,15 +213,15 @@
 
 typedef struct
 {
-	union
-	{
-		struct
-		{
-			uint16_t precision;
-			int16_t  output;
-		};
-		int32_t sum;
-	};
+    union
+    {
+        struct
+        {
+            uint16_t precision;
+            int16_t  output;
+        };
+        int32_t sum;
+    };
 } FILTER_TYPE_t;
 
 /**

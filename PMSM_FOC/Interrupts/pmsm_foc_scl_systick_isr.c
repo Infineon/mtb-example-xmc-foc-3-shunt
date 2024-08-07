@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -79,7 +79,7 @@ void PMSM_FOC_SCL_ISR(void)
   switch (PMSM_FOC_CTRL.msm_state)
   {
   case PMSM_FOC_MSM_IDLE:
-	  if ((SystemVar.ParamConfigured == 1) && (SystemVar.Edl7141Configured == 1))
+      if ((SystemVar.ParamConfigured == 1) && (SystemVar.Edl7141Configured == 1))
     {
       if (idle_state_delay_counter <= 3)
       {
@@ -99,20 +99,20 @@ void PMSM_FOC_SCL_ISR(void)
     {
 
     }
-	  break;
+      break;
 
   default:
+    /* Users may choose to start off with Voltage control first then speed inner current control. See example code below*/
 
-	  if (PMSM_FOC_INPUT.user_ctrl_scheme == SPEED_INNER_CURRENT_CTRL_SCHEME)
-	  {
+      if (PMSM_FOC_INPUT.user_ctrl_scheme == SPEED_INNER_CURRENT_CTRL_SCHEME)
+      {
           if ((PMSM_FOC_CTRL.msm_state == PMSM_FOC_MSM_CLOSED_LOOP)
             && (PMSM_FOC_CTRL.transition_status == PMSM_FOC_MOTOR_STATUS_TRANSITION))
           {
             PMSM_FOC_SPEED_PI.uk_limit_max = PMSM_FOC_INPUT.limit_max_iq;
 
-            /* During startup Vq voltage control is used and then it will switch to the speed current control */
-            /***************************************************************************************************/
-            if (PMSM_FOC_PLL_ESTIMATOR.rotor_speed > (4 * MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS))
+            // During startup Vq voltage control is used and then it will switch to the speed current control
+            if (PMSM_FOC_PLL_ESTIMATOR.rotor_speed > (2 * MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS))
             {
               PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_STABLE;
               PMSM_FOC_SPEED_PI.ik = PMSM_FOC_OUTPUT.park_transform.torque_iq << PMSM_FOC_SPEED_PI.scale_kp_ki;
@@ -120,20 +120,20 @@ void PMSM_FOC_SCL_ISR(void)
               PMSM_FOC_CTRL.ctrl_scheme_fun_ptr = &PMSM_FOC_SpeedCurrentCtrl;
             }
           }
-	  }
-	  else if(PMSM_FOC_INPUT.user_ctrl_scheme == VQ_VOLTAGE_CTRL_SCHEME)
-	  {
-		if(PMSM_FOC_PLL_ESTIMATOR.rotor_speed > MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS)
-		PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_STABLE;
-	  }
+      }
+      else if(PMSM_FOC_INPUT.user_ctrl_scheme == VQ_VOLTAGE_CTRL_SCHEME)
+      {
+        if(PMSM_FOC_PLL_ESTIMATOR.rotor_speed > MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS)
+        PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_STABLE;
+      }
 
-	  /***************************************************************************************************/
-	  /* If ucProbe/Microinspector GUI is enabled then this function process the cmd received from GUI */
-	#if(USER_UCPROBE_GUI == ENABLED)
-	  PMSM_FOC_ucProbe_CmdProcessing();
-	#endif
-	  break;
-	  }
+      /***************************************************************************************************/
+      /* If ucProbe/Microinspector GUI is enabled then this function process the cmd received from GUI */
+    #if(USER_UCPROBE_GUI == ENABLED)
+      PMSM_FOC_ucProbe_CmdProcessing();
+    #endif
+      break;
+      }
 }
 
 /**

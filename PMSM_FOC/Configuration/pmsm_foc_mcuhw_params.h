@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -256,14 +256,14 @@
 /* Initial Duty Cycle of Debug PWM Channels */
 #define DEBUG_PWM_50_PERCENT_DC_CNTS                    ((uint16_t)(DEBUG_PWM_PERIOD_CNTS >> 1))
 
-/* P0.5 */
+/* P4.8 */
 #if (DEBUG_PWM_0_ENABLE == 1U)
-#define DEBUG_PWM_0_SLICE                              (CCU40_CC41)
-#define DEBUG_PWM_0_SLICE_NUM                          (1U)
-#define DEBUG_PWM_0_SLICE_SHADOW_TRANS_ENABLE_Msk      (XMC_CCU4_SHADOW_TRANSFER_SLICE_1)
+#define DEBUG_PWM_0_SLICE                              (CCU40_CC40)
+#define DEBUG_PWM_0_SLICE_NUM                          (0U)
+#define DEBUG_PWM_0_SLICE_SHADOW_TRANS_ENABLE_Msk      (XMC_CCU4_SHADOW_TRANSFER_SLICE_0)
 #define DEBUG_PWM_0_PORT                               (XMC_GPIO_PORT4)
-#define DEBUG_PWM_0_PIN                                (1U)
-#define DEBUG_PWM_0_ALT_OUT                            (XMC_GPIO_MODE_OUTPUT_PUSH_PULL_ALT5)
+#define DEBUG_PWM_0_PIN                                (8U)
+#define DEBUG_PWM_0_ALT_OUT                            (XMC_GPIO_MODE_OUTPUT_PUSH_PULL_ALT6)
 #endif  /*DEBUG_PWM_0_ENABLE == 1*/
 
 /* P0.4 */

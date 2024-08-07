@@ -1,9 +1,9 @@
 /**
- * @file pmsm_foc_6EDL7141_config.h
+ * @file pmsm_foc_gatedrv_config.h
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -35,8 +35,8 @@
  * so agrees to indemnify Cypress against all liability.
  *@endcond
  ***********************************************************************************************************************/
-#ifndef PMSM_FOC_6EDL7141_CONFIG_H
-#define PMSM_FOC_6EDL7141_CONFIG_H
+#ifndef PMSM_FOC_GATEDRV_CONFIG_H
+#define PMSM_FOC_GATEDRV_CONFIG_H
 
 /**
  * @addtogroup PMSM_FOC
@@ -101,301 +101,301 @@
   *     2. Access whole 16-bit register by register name: Edl7141Reg.FAULT_ST for FAULT_ST
   *     3. Access bitfield: Edl7141Reg.FAULT_ST_CS_OCP_FLT for CS_OCP_FLT bitfield [2:0] in FAULT_ST
   ****************************************************************************/
-typedef union 
+typedef union
 {
-	uint16_t    table[31+1];
-	struct
-	{
-		/**************************************************
-		 *  Status register, read-only
-		 *************************************************/
-		/* Structure of the FAULT_ST register */
-		union
-		{
-		    uint16_t FAULT_ST;      /* register address 0x00 */
-		    struct
-		    {
-		        uint16_t FAULT_ST_CS_OCP_FLT    :3;   // bit 2-0
-		        uint16_t FAULT_ST_CP_FLT        :1;   // bit 3
-		        uint16_t FAULT_ST_DVDD_OCP_FLT  :1;   // bit 4
-		        uint16_t FAULT_ST_DVDD_UV_FLT   :1;   // bit 5
-		        uint16_t FAULT_ST_DVDD_OV_FLT   :1;   // bit 6
-		        uint16_t FAULT_ST_BK_OCP_FLT    :1;   // bit 7
-		        uint16_t FAULT_ST_OTS_FLT       :1;   // bit 8
-		        uint16_t FAULT_ST_OTW_FLT       :1;   // bit 9
-		        uint16_t FAULT_ST_RLOCK_FLT     :1;   // bit 10
-		        uint16_t FAULT_ST_WD_FLT        :1;   // bit 11
-		        uint16_t FAULT_ST_OTP_FLT       :1;   // bit 12
-		    };
-		};
-		/* Structure of the TEMP_ST Register */
-		union
-		{
-		    uint16_t TEMP_ST;       /* 0x01 */
-		    struct
-		    {
-		        uint16_t TEMP_ST_TEMP_VAL       :7;   // bit 6-0
-		    };
-		};
-		/* Structure of the SUPPLY_ST Register */
-		union
-		{
-		    uint16_t SUPPLY_ST;     /* 0x02 */
-		    struct
-		    {
-		        uint16_t SUPPLY_ST_VCCLS_UVST    :1;   // bit 0
-		        uint16_t SUPPLY_ST_VCCHS_UVST    :1;   // bit 1
-		        uint16_t SUPPLY_ST_DVDD_UVST     :1;   // bit 2
-		        uint16_t SUPPLY_ST_DVDD_OVST     :1;   // bit 3
-		        uint16_t SUPPLY_ST_VDDB_UVST     :1;   // bit 4
-		        uint16_t SUPPLY_ST_VDDB_OVST     :1;   // bit 5
-		        uint16_t SUPPLY_ST_PVDD_VAL      :7;   // bit 12-6
-		    };
-		};
-		/* Structure of the FUNCT_ST Register */
-		union
-		{
-		    uint16_t FUNCT_ST;      /* register address 0x03 */
-		    struct
-		    {
-		        uint16_t FUNCT_ST_HALLIN_ST     :3;   // bit 2-0
-		        uint16_t FUNCT_ST_HALLPOL_ST    :1;   // bit 3
-		        uint16_t FUNCT_ST_DVDD_ST       :1;   // bit 4
-		        uint16_t FUNCT_ST_CS_GAIN_ST    :3;   // bit 7-5
-		    };
-		};
-		/* Structure of the OTP_ST Register */
-		union
-		{
-		    uint16_t OTP_ST;        /* register address 0x04 */
-		    struct
-		    {
-		        uint16_t OTP_ST_OTP_USED        :1;   // bit 0
-		        uint16_t OTP_ST_OTP_PASS        :1;   // bit 1
-		        uint16_t OTP_ST_OTP_PROG_BLOCK  :1;   // bit 2
-		        uint16_t OTP_ST_OTP_PROG_FAIL   :1;   // bit 3
-		    };
-		};
-		/* Structure of the ADC_ST Register */
-		union
-		{
-		    uint16_t ADC_ST;        /* register address 0x05 */
-		    struct
-		    {
-		        uint16_t ADC_ST_ADC_OD_RDY      :1;   // bit 0
-		        uint16_t ADC_ST_ADC_OD_VAL      :7;   // bit 7-1
-		    };
-		};
-		/* Structure of the CP_ST Register */
-		union
-		{
-		    uint16_t CP_ST;         /* register address 0x06 */
-		    struct
-		    {
-		        uint16_t CP_ST_VCCHS_VAL        :7;   // bit 6-0
-		        uint16_t CP_ST_VCCLS_VAL        :7;   // bit 13-7
-		    };
-		};
-		/* Structure of the DEVICE_ST Register */
-		union
-		{
-		    uint16_t DEVICE_ID;     /* register address 0x07 */
-		    struct
-		    {
-		        uint16_t DEVICE_ID_DEV_ID       :4;   // bit 3-0
-		    };
-		};
-		/**************************************************
-		 *  Status register, read-only
-		 *************************************************/
-		uint16_t    reserved[8];    /* 0x08 - 0x0F, reserved address */
-		/**************************************************
-		 *  Configure register, read-write, with several
-		 *  write-only exceptions
-		 *************************************************/
-		union
-		{
-			uint16_t FAULTS_CLR;    /* register address 0x10 */
-			struct
-			{
-				uint16_t FAULTS_CLR_CLR_FLTS        :1;   // bit 0
-				uint16_t FAULTS_CLR_CLR_LATCH       :1;   // bit 1
-			};
-		};
-		union
-		{
-			uint16_t SUPPLY_CFG;    /* register address 0x11 */
-			struct
-			{
-				uint16_t SUPPLY_CFG_PVCC_SETPT      :2;   // bit 1-0
-				uint16_t SUPPLY_CFG_CS_REF_CFG      :2;   // bit 3-2
-				uint16_t SUPPLY_CFG_DVDD_OCP_CFG    :2;   // bit 5-4
-				uint16_t SUPPLY_CFG_DVDD_SFTSTRT    :4;   // bit 9-6
-				uint16_t SUPPLY_CFG_DVDD_SETPT      :2;   // bit 11-10
-				uint16_t SUPPLY_CFG_BK_FREQ         :1;   // bit 12
-				uint16_t SUPPLY_CFG_DVDD_TON_DELAY  :2;   // bit 14-13
-				uint16_t SUPPLY_CFG_CP_PRECHARGE_EN :1;   // bit 15
-			};
-		};
-		union
-		{
-			uint16_t ADC_CFG;       /* register address 0x12 */
-			struct
-			{
-				uint16_t ADC_CFG_ADC_OD_REQ         :1;   // bit 0
-				uint16_t ADC_CFG_ADC_OD_INSEL       :2;   // bit 2-1
-				uint16_t ADC_CFG_ADC_EN_FILT        :1;   // bit 3
-				uint16_t ADC_CFG_ADC_FILT_CFG       :2;   // bit 5-4
-				uint16_t ADC_CFG_ADC_FILT_CFG_PVDD  :2;   // bit 7-6
-			};
-		};
-		union
-		{
-			uint16_t PWM_CFG;       /* register address 0x13 */
-			struct
-			{
-				uint16_t PWM_CFG_PWM_MODE           :3;   // bit 2-0
-				uint16_t PWM_CFG_PWM_FREEW_CFG      :1;   // bit 3
-				uint16_t PWM_CFG_BRAKE_CFG          :2;   // bit 5-4
-				uint16_t PWM_CFG_PWM_RECIRC         :1;   // bit 6
-			};
-		};
-		union
-		{
-			uint16_t SENSOR_CFG;    /* register address 0x14 */
-			struct
-			{
-				uint16_t SENSOR_CFG_HALL_DEGLITCH   :4;   // bit 3-0
-				uint16_t SENSOR_CFG_OTS_DIS         :1;   // bit 4
-				uint16_t SENSOR_CFG_CS_TMODE        :2;   // bit 6-5
-			};
-		};
-		union
-		{
-			uint16_t WD_CFG;        /* register address 0x15 */
-			struct
-			{
-				uint16_t WD_CFG_WD_EN               :1;   // bit 0
-				uint16_t WD_CFG_WD_INSEL            :3;   // bit 3-1
-				uint16_t WD_CFG_WD_FLTCFG           :1;   // bit 4
-				uint16_t WD_CFG_WD_TIMER_T          :10;  // bit 14-5
-			};
-		};
-		union
-		{
-			uint16_t WD_CFG2;       /* register address 0x16 */
-			struct
-			{
-				uint16_t WD_CFG2_WD_BRAKE           :1;   // bit 0
-				uint16_t WD_CFG2_WD_EN_LATCH        :1;   // bit 1
-				uint16_t WD_CFG2_WD_DVDD_RSTRT_ATT  :2;   // bit 3-2
-				uint16_t WD_CFG2_WD_DVDD_RSTRT_DLY  :4;   // bit 7-4
-				uint16_t WD_CFG2_WD_RLOCK_EN        :1;   // bit 8
-				uint16_t WD_CFG2_WD_RLOCK_T         :3;   // bit 11-9
-				uint16_t WD_CFG2_WD_BK_DIS          :1;   // bit 12
-			};
-		};
-		union
-		{
-			uint16_t IDRIVE_CFG;   /* register address 0x17 */
-			struct
-			{
-				uint16_t IDRIVE_CFG_IHS_SRC         :4;   // bit 3-0
-				uint16_t IDRIVE_CFG_IHS_SINK        :4;   // bit 7-4
-				uint16_t IDRIVE_CFG_ILS_SRC         :4;   // bit 11-8
-				uint16_t IDRIVE_CFG_ILS_SINK        :4;   // bit 15-12
-			};
-		};
-		union
-		{
-			uint16_t IDRIVE_PRE_CFG;   /* register address 0x18 */
-			struct
-			{
-				uint16_t IDRIVE_PRE_CFG_I_PRE_SRC   :4;   // bit 3-0
-				uint16_t IDRIVE_PRE_CFG_I_PRE_SINK  :4;   // bit 7-4
-				uint16_t IDRIVE_PRE_CFG_I_PRE_EN    :1;   // bit 8
-			};
-		};
-		union
-		{
-			uint16_t TDRIVE_SRC_CFG;       /* register address 0x19 */
-			struct
-			{
-				uint16_t TDRIVE_SRC_CFG_TDRIVE1     :8;   // bit 7-0
-				uint16_t TDRIVE_SRC_CFG_TDRIVE2     :8;   // bit 15-8
-			};
-		};
-		union
-		{
-			uint16_t TDRIVE_SINK_CFG;       /* register address 0x1A */
-			struct
-			{
-				uint16_t TDRIVE_SINK_CFG_TDRIVE3    :8;   // bit 7-0
-				uint16_t TDRIVE_SINK_CFG_TDRIVE4    :8;   // bit 15-8
-			};
-		};
-		union
-		{
-			uint16_t DT_CFG;       /* register address 0x1B */
-			struct
-			{
-				uint16_t DT_CFG_DT_RISE             :8;   // bit 7-0
-				uint16_t DT_CFG_DT_FALL             :8;   // bit 15-8
-			};
-		};
-		union
-		{
-			uint16_t CP_CFG;     /* register address 0x1C */
-			struct
-			{
-				uint16_t CP_CFG_CP_CLK_CFG          :2;   // bit 1-0
-				uint16_t CP_CFG_CP_CLK_SS_DIS       :1;   // bit 2
-			};
-		};
-		union
-		{
-			uint16_t CSAMP_CFG;     /* register address 0x1D */
-			struct
-			{
-				uint16_t CSAMP_CFG_CS_GAIN          :3;   // bit 2-0
-				uint16_t CSAMP_CFG_CS_GAIN_ANA      :1;   // bit 3
-				uint16_t CSAMP_CFG_CS_EN            :3;   // bit 6-4
-				uint16_t CSAMP_CFG_CS_BLANK         :4;   // bit 10-7
-				uint16_t CSAMP_CFG_CS_EN_DCCAL      :1;   // bit 11
-				uint16_t CSAMP_CFG_CS_OCP_DEGLITCH  :2;   // bit 13-12
-				uint16_t CSAMP_CFG_CS_OCPFLT_CFG    :2;   // bit 15-14
-			};
-		};
-		union
-		{
-			uint16_t CSAMP_CFG2;    /* register address 0x1E */
-			struct
-			{
-				uint16_t CSAMP_CFG2_CS_OCP_PTHR     :4;   // bit 3-0
-				uint16_t CSAMP_CFG2_CS_OCP_NTHR     :4;   // bit 7-4
-				uint16_t CSAMP_CFG2_CS_OCP_LATCH    :1;   // bit 8
-				uint16_t CSAMP_CFG2_CS_MODE         :1;   // bit 9
-				uint16_t CSAMP_CFG2_CS_OCP_BRAKE    :1;   // bit 10
-				uint16_t CSAMP_CFG2_CS_TRUNC_DIS    :1;   // bit 11
-				uint16_t CSAMP_CFG2_VREF_INSEL      :1;   // bit 12
-				uint16_t CSAMP_CFG2_CS_NEG_OCP_DIS  :1;   // bit 13
-				uint16_t CSAMP_CFG2_CS_AZ_CFG       :2;   // bit 15-14
-			};
-		};
-		union
-		{
-			uint16_t OTP_PROG;      /* register address 0x1F */
-			struct
-			{
-				uint16_t OTP_PROG_OTP_PROG          :1;   // bit 0
-				uint16_t OTP_PROG_USER_ID           :4;   // bit 4-1
-			};
-		};
-		/**************************************************
-		 *  chip_version, not in 6EDL7141 RAM
-		 *************************************************/
-		uint16_t    chip_version;   /* Not in 6EDL7141 RAM */
-	};
+    uint16_t    table[31+1];
+    struct
+    {
+        /**************************************************
+         *  Status register, read-only
+         *************************************************/
+        /* Structure of the FAULT_ST register */
+        union
+        {
+            uint16_t FAULT_ST;      /* register address 0x00 */
+            struct
+            {
+                uint16_t FAULT_ST_CS_OCP_FLT    :3;   // bit 2-0
+                uint16_t FAULT_ST_CP_FLT        :1;   // bit 3
+                uint16_t FAULT_ST_DVDD_OCP_FLT  :1;   // bit 4
+                uint16_t FAULT_ST_DVDD_UV_FLT   :1;   // bit 5
+                uint16_t FAULT_ST_DVDD_OV_FLT   :1;   // bit 6
+                uint16_t FAULT_ST_BK_OCP_FLT    :1;   // bit 7
+                uint16_t FAULT_ST_OTS_FLT       :1;   // bit 8
+                uint16_t FAULT_ST_OTW_FLT       :1;   // bit 9
+                uint16_t FAULT_ST_RLOCK_FLT     :1;   // bit 10
+                uint16_t FAULT_ST_WD_FLT        :1;   // bit 11
+                uint16_t FAULT_ST_OTP_FLT       :1;   // bit 12
+            };
+        };
+        /* Structure of the TEMP_ST Register */
+        union
+        {
+            uint16_t TEMP_ST;       /* 0x01 */
+            struct
+            {
+                uint16_t TEMP_ST_TEMP_VAL       :7;   // bit 6-0
+            };
+        };
+        /* Structure of the SUPPLY_ST Register */
+        union
+        {
+            uint16_t SUPPLY_ST;     /* 0x02 */
+            struct
+            {
+                uint16_t SUPPLY_ST_VCCLS_UVST    :1;   // bit 0
+                uint16_t SUPPLY_ST_VCCHS_UVST    :1;   // bit 1
+                uint16_t SUPPLY_ST_DVDD_UVST     :1;   // bit 2
+                uint16_t SUPPLY_ST_DVDD_OVST     :1;   // bit 3
+                uint16_t SUPPLY_ST_VDDB_UVST     :1;   // bit 4
+                uint16_t SUPPLY_ST_VDDB_OVST     :1;   // bit 5
+                uint16_t SUPPLY_ST_PVDD_VAL      :7;   // bit 12-6
+            };
+        };
+        /* Structure of the FUNCT_ST Register */
+        union
+        {
+            uint16_t FUNCT_ST;      /* register address 0x03 */
+            struct
+            {
+                uint16_t FUNCT_ST_HALLIN_ST     :3;   // bit 2-0
+                uint16_t FUNCT_ST_HALLPOL_ST    :1;   // bit 3
+                uint16_t FUNCT_ST_DVDD_ST       :1;   // bit 4
+                uint16_t FUNCT_ST_CS_GAIN_ST    :3;   // bit 7-5
+            };
+        };
+        /* Structure of the OTP_ST Register */
+        union
+        {
+            uint16_t OTP_ST;        /* register address 0x04 */
+            struct
+            {
+                uint16_t OTP_ST_OTP_USED        :1;   // bit 0
+                uint16_t OTP_ST_OTP_PASS        :1;   // bit 1
+                uint16_t OTP_ST_OTP_PROG_BLOCK  :1;   // bit 2
+                uint16_t OTP_ST_OTP_PROG_FAIL   :1;   // bit 3
+            };
+        };
+        /* Structure of the ADC_ST Register */
+        union
+        {
+            uint16_t ADC_ST;        /* register address 0x05 */
+            struct
+            {
+                uint16_t ADC_ST_ADC_OD_RDY      :1;   // bit 0
+                uint16_t ADC_ST_ADC_OD_VAL      :7;   // bit 7-1
+            };
+        };
+        /* Structure of the CP_ST Register */
+        union
+        {
+            uint16_t CP_ST;         /* register address 0x06 */
+            struct
+            {
+                uint16_t CP_ST_VCCHS_VAL        :7;   // bit 6-0
+                uint16_t CP_ST_VCCLS_VAL        :7;   // bit 13-7
+            };
+        };
+        /* Structure of the DEVICE_ST Register */
+        union
+        {
+            uint16_t DEVICE_ID;     /* register address 0x07 */
+            struct
+            {
+                uint16_t DEVICE_ID_DEV_ID       :4;   // bit 3-0
+            };
+        };
+        /**************************************************
+         *  Status register, read-only
+         *************************************************/
+        uint16_t    reserved[8];    /* 0x08 - 0x0F, reserved address */
+        /**************************************************
+         *  Configure register, read-write, with several
+         *  write-only exceptions
+         *************************************************/
+        union
+        {
+            uint16_t FAULTS_CLR;    /* register address 0x10 */
+            struct
+            {
+                uint16_t FAULTS_CLR_CLR_FLTS        :1;   // bit 0
+                uint16_t FAULTS_CLR_CLR_LATCH       :1;   // bit 1
+            };
+        };
+        union
+        {
+            uint16_t SUPPLY_CFG;    /* register address 0x11 */
+            struct
+            {
+                uint16_t SUPPLY_CFG_PVCC_SETPT      :2;   // bit 1-0
+                uint16_t SUPPLY_CFG_CS_REF_CFG      :2;   // bit 3-2
+                uint16_t SUPPLY_CFG_DVDD_OCP_CFG    :2;   // bit 5-4
+                uint16_t SUPPLY_CFG_DVDD_SFTSTRT    :4;   // bit 9-6
+                uint16_t SUPPLY_CFG_DVDD_SETPT      :2;   // bit 11-10
+                uint16_t SUPPLY_CFG_BK_FREQ         :1;   // bit 12
+                uint16_t SUPPLY_CFG_DVDD_TON_DELAY  :2;   // bit 14-13
+                uint16_t SUPPLY_CFG_CP_PRECHARGE_EN :1;   // bit 15
+            };
+        };
+        union
+        {
+            uint16_t ADC_CFG;       /* register address 0x12 */
+            struct
+            {
+                uint16_t ADC_CFG_ADC_OD_REQ         :1;   // bit 0
+                uint16_t ADC_CFG_ADC_OD_INSEL       :2;   // bit 2-1
+                uint16_t ADC_CFG_ADC_EN_FILT        :1;   // bit 3
+                uint16_t ADC_CFG_ADC_FILT_CFG       :2;   // bit 5-4
+                uint16_t ADC_CFG_ADC_FILT_CFG_PVDD  :2;   // bit 7-6
+            };
+        };
+        union
+        {
+            uint16_t PWM_CFG;       /* register address 0x13 */
+            struct
+            {
+                uint16_t PWM_CFG_PWM_MODE           :3;   // bit 2-0
+                uint16_t PWM_CFG_PWM_FREEW_CFG      :1;   // bit 3
+                uint16_t PWM_CFG_BRAKE_CFG          :2;   // bit 5-4
+                uint16_t PWM_CFG_PWM_RECIRC         :1;   // bit 6
+            };
+        };
+        union
+        {
+            uint16_t SENSOR_CFG;    /* register address 0x14 */
+            struct
+            {
+                uint16_t SENSOR_CFG_HALL_DEGLITCH   :4;   // bit 3-0
+                uint16_t SENSOR_CFG_OTS_DIS         :1;   // bit 4
+                uint16_t SENSOR_CFG_CS_TMODE        :2;   // bit 6-5
+            };
+        };
+        union
+        {
+            uint16_t WD_CFG;        /* register address 0x15 */
+            struct
+            {
+                uint16_t WD_CFG_WD_EN               :1;   // bit 0
+                uint16_t WD_CFG_WD_INSEL            :3;   // bit 3-1
+                uint16_t WD_CFG_WD_FLTCFG           :1;   // bit 4
+                uint16_t WD_CFG_WD_TIMER_T          :10;  // bit 14-5
+            };
+        };
+        union
+        {
+            uint16_t WD_CFG2;       /* register address 0x16 */
+            struct
+            {
+                uint16_t WD_CFG2_WD_BRAKE           :1;   // bit 0
+                uint16_t WD_CFG2_WD_EN_LATCH        :1;   // bit 1
+                uint16_t WD_CFG2_WD_DVDD_RSTRT_ATT  :2;   // bit 3-2
+                uint16_t WD_CFG2_WD_DVDD_RSTRT_DLY  :4;   // bit 7-4
+                uint16_t WD_CFG2_WD_RLOCK_EN        :1;   // bit 8
+                uint16_t WD_CFG2_WD_RLOCK_T         :3;   // bit 11-9
+                uint16_t WD_CFG2_WD_BK_DIS          :1;   // bit 12
+            };
+        };
+        union
+        {
+            uint16_t IDRIVE_CFG;   /* register address 0x17 */
+            struct
+            {
+                uint16_t IDRIVE_CFG_IHS_SRC         :4;   // bit 3-0
+                uint16_t IDRIVE_CFG_IHS_SINK        :4;   // bit 7-4
+                uint16_t IDRIVE_CFG_ILS_SRC         :4;   // bit 11-8
+                uint16_t IDRIVE_CFG_ILS_SINK        :4;   // bit 15-12
+            };
+        };
+        union
+        {
+            uint16_t IDRIVE_PRE_CFG;   /* register address 0x18 */
+            struct
+            {
+                uint16_t IDRIVE_PRE_CFG_I_PRE_SRC   :4;   // bit 3-0
+                uint16_t IDRIVE_PRE_CFG_I_PRE_SINK  :4;   // bit 7-4
+                uint16_t IDRIVE_PRE_CFG_I_PRE_EN    :1;   // bit 8
+            };
+        };
+        union
+        {
+            uint16_t TDRIVE_SRC_CFG;       /* register address 0x19 */
+            struct
+            {
+                uint16_t TDRIVE_SRC_CFG_TDRIVE1     :8;   // bit 7-0
+                uint16_t TDRIVE_SRC_CFG_TDRIVE2     :8;   // bit 15-8
+            };
+        };
+        union
+        {
+            uint16_t TDRIVE_SINK_CFG;       /* register address 0x1A */
+            struct
+            {
+                uint16_t TDRIVE_SINK_CFG_TDRIVE3    :8;   // bit 7-0
+                uint16_t TDRIVE_SINK_CFG_TDRIVE4    :8;   // bit 15-8
+            };
+        };
+        union
+        {
+            uint16_t DT_CFG;       /* register address 0x1B */
+            struct
+            {
+                uint16_t DT_CFG_DT_RISE             :8;   // bit 7-0
+                uint16_t DT_CFG_DT_FALL             :8;   // bit 15-8
+            };
+        };
+        union
+        {
+            uint16_t CP_CFG;     /* register address 0x1C */
+            struct
+            {
+                uint16_t CP_CFG_CP_CLK_CFG          :2;   // bit 1-0
+                uint16_t CP_CFG_CP_CLK_SS_DIS       :1;   // bit 2
+            };
+        };
+        union
+        {
+            uint16_t CSAMP_CFG;     /* register address 0x1D */
+            struct
+            {
+                uint16_t CSAMP_CFG_CS_GAIN          :3;   // bit 2-0
+                uint16_t CSAMP_CFG_CS_GAIN_ANA      :1;   // bit 3
+                uint16_t CSAMP_CFG_CS_EN            :3;   // bit 6-4
+                uint16_t CSAMP_CFG_CS_BLANK         :4;   // bit 10-7
+                uint16_t CSAMP_CFG_CS_EN_DCCAL      :1;   // bit 11
+                uint16_t CSAMP_CFG_CS_OCP_DEGLITCH  :2;   // bit 13-12
+                uint16_t CSAMP_CFG_CS_OCPFLT_CFG    :2;   // bit 15-14
+            };
+        };
+        union
+        {
+            uint16_t CSAMP_CFG2;    /* register address 0x1E */
+            struct
+            {
+                uint16_t CSAMP_CFG2_CS_OCP_PTHR     :4;   // bit 3-0
+                uint16_t CSAMP_CFG2_CS_OCP_NTHR     :4;   // bit 7-4
+                uint16_t CSAMP_CFG2_CS_OCP_LATCH    :1;   // bit 8
+                uint16_t CSAMP_CFG2_CS_MODE         :1;   // bit 9
+                uint16_t CSAMP_CFG2_CS_OCP_BRAKE    :1;   // bit 10
+                uint16_t CSAMP_CFG2_CS_TRUNC_DIS    :1;   // bit 11
+                uint16_t CSAMP_CFG2_VREF_INSEL      :1;   // bit 12
+                uint16_t CSAMP_CFG2_CS_NEG_OCP_DIS  :1;   // bit 13
+                uint16_t CSAMP_CFG2_CS_AZ_CFG       :2;   // bit 15-14
+            };
+        };
+        union
+        {
+            uint16_t OTP_PROG;      /* register address 0x1F */
+            struct
+            {
+                uint16_t OTP_PROG_OTP_PROG          :1;   // bit 0
+                uint16_t OTP_PROG_USER_ID           :4;   // bit 4-1
+            };
+        };
+        /**************************************************
+         *  chip_version, not in 6EDL7141 RAM
+         *************************************************/
+        uint16_t    chip_version;   /* Not in 6EDL7141 RAM */
+    };
 } edl7141_register_t;
 
 extern edl7141_register_t Edl7141Reg;
@@ -3033,7 +3033,6 @@ extern edl7141_register_t Edl7141Reg;
 
 
 #endif //(EDL7141_CHIP_VERSION == 21)
-
 /**
  * @}
  */
@@ -3042,6 +3041,6 @@ extern edl7141_register_t Edl7141Reg;
  * @}
  */
 
-#endif //PMSM_FOC_6EDL7141_CONFIG_H
+#endif //PMSM_FOC_GATEDRV_CONFIG_H
 
 /* --- End of File ------------------------------------------------ */

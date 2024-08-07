@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -165,7 +165,7 @@ const XMC_GPIO_CONFIG_t PMSM_FOC_GPIO_PhW_Low_Config =
 /* API to initialize GPIO pins used */
 void PMSM_FOC_GPIO_Init(void)
 {
-	/* GPIO defination for INVERTER_EN_PIN, BRAKE_EN_PIN, AUTO_ZERO, DRV_CLK_EN_PIN are declared at EDL7141_Config_init() */
+    /* GPIO defination for INVERTER_EN_PIN, BRAKE_EN_PIN, AUTO_ZERO, DRV_CLK_EN_PIN are declared at EDL7141_Config_init() */
 //  #ifdef INVERTER_EN_PIN
 //  /* Gate driver enable/disable pin */
 //  XMC_GPIO_Init(INVERTER_EN_PIN, &Inverter_Enable_Pin_Config);

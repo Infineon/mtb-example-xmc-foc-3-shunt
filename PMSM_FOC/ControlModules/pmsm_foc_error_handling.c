@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -71,7 +71,7 @@ void PMSM_FOC_ErrorHandling(void)
   if (MotorVar.fault_clear == 1U)
   {
     MotorVar.fault_clear = 0;
-	  /******************************************************************************************************************
+      /******************************************************************************************************************
      * Error handling for CTRAP
      ******************************************************************************************************************/
     if ((MotorVar.error_status & PMSM_FOC_EID_CTRAP) && MotorVar.MaskedFault.Trap == 1)
@@ -127,17 +127,17 @@ void PMSM_FOC_ErrorHandling(void)
      *****************************************************************************************************************/
     if (MotorVar.error_status & PMSM_FOC_EID_TORQUE_LIMIT_EXCEED)
     {
-	    /* Clear the error when fault_clear flag is set */
+        /* Clear the error when fault_clear flag is set */
       MotorVar.error_status &= (~PMSM_FOC_EID_TORQUE_LIMIT_EXCEED);
     }
 
     /******************************************************************************************************************
-     * Error handling for 6EDL7141 Fault
+     * Error handling for gate driver Fault
      *****************************************************************************************************************/
     if ((MotorVar.error_status & PMSM_FOC_EID_NFAULT_FAULT)&& MotorVar.MaskedFault.Nfault == 1)
     {
-      /* Clear all 6EDL7141 Faults including latched faults */
-      write_word_16b(0x10, 0x03);   /* Write to 6EDL7141 */
+      /* Clear all gate driver's Faults including latched faults */
+      write_word_16b(0x10, 0x03);   /* Write to gate driver's FAULTS_CLR register */
       /* Clear the error when fault_clear flag is set */
       MotorVar.error_status &= (~PMSM_FOC_EID_NFAULT_FAULT);
     }
@@ -147,10 +147,9 @@ void PMSM_FOC_ErrorHandling(void)
   MotorVar.MaskedFault.Value = MotorVar.error_status & MotorParam.EnableFault.Value;
   if (MotorVar.MaskedFault.Value == 0U)
   {
-	/* Disable low side braking in 6EDL7141 gate driver through nBRAKE pin */
-	XMC_GPIO_SetOutputHigh(CYBSP_GD_NBRAKE);
-	PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_STOP_MOTOR;
-	PMSM_FOC_CTRL.msm_state = (1 << 6);//PMSM_FOC_MSM_IDLE;
+    /* Disable low side braking in gate driver through nBRAKE pin */
+    XMC_GPIO_SetOutputHigh(CYBSP_GD_NBRAKE);
+    PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_IDLE;
   }
 
   PMSM_FOC_SVPWM_Update(0, 0);

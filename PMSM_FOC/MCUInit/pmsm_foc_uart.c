@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -47,7 +47,7 @@
 extern PMSM_FOC_CTRL_t PMSM_FOC_CTRL; /* motor control information */
 
 /**
-  * @brief	Initialize USIC Module
+  * @brief  Initialize USIC Module
   *
   * @param  None
   * @retval None
@@ -60,7 +60,7 @@ extern PMSM_FOC_CTRL_t PMSM_FOC_CTRL; /* motor control information */
 
 #if(UART_ENABLE == USIC0_CH1_P1_2_P1_3)
 /**
- * @brief	Initialize USIC Module
+ * @brief   Initialize USIC Module
  *
  * @param  None
  * @retval None

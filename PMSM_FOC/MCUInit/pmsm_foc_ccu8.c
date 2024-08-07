@@ -3,7 +3,7 @@
  *
  * @cond
  *********************************************************************************************************************
- * Copyright 2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -214,9 +214,9 @@ void PMSM_FOC_CCU8_Init(void)
 
   /* Enable shadow transfer for slice 0,1,2,3 for CCU80 Kernel */
   XMC_CCU8_EnableShadowTransfer(CCU8_MODULE, ((uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_0 |
-					      (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_1 |
-					      (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_2 |
-					      (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_3));
+                          (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_1 |
+                          (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_2 |
+                          (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_3));
 
   /*  Enable interrupt for CCU80 Period Match Enable */
   XMC_CCU8_SLICE_EnableEvent(CCU8_SLICE_PHASE_U, XMC_CCU8_SLICE_IRQ_ID_PERIOD_MATCH);

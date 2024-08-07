@@ -76,6 +76,8 @@ typedef struct PMSM_FOC_PLL_PI
   int32_t ik_limit_max;                       /*!< Integral buffer limit  - maximum */
   int32_t uk_limit_min;                       /*!< PI output limit - minimum */
   int32_t uk_limit_max;                       /*!< PI output limit - maximum */
+  int32_t uk_limit_max_scaled;                /*!< Internal variable - PI output limit scaled - maximum */
+  int32_t uk_limit_min_scaled;                /*!< Internal variable - PI output limit scaled - minimum */
   uint16_t kp;                                /*!< Proportional gain Kp */
   uint16_t ki;                                /*!< Integral gain Ki */
   int16_t scale_kp_ki;                        /*!< Scale-up Kp and Ki by 2^Scale_KpKi */
@@ -100,7 +102,8 @@ typedef struct PMSM_FOC_PLL_ESTIMATOR
   int16_t phase_inductance_scale;             /*!< */
   int16_t lpf_n_bemf;                         /*!< Low pass filter coefficient for PLL internal signals */
   int32_t lpf_n_speed;                        /*!< Low pass filter coefficient for estimated speed */
-  int16_t res_inc;                            /*!< Speed resolution increase */
+  int16_t speed_angle_conversion_factor;      /*!< Rotor speed to angle conversion factor */
+  int16_t speed_angle_conversion_factor_scale; /*!< Rotor speed to angle conversion factor scale */
 
 }PMSM_FOC_PLL_ESTIMATOR_t;
 
@@ -109,7 +112,7 @@ typedef struct PMSM_FOC_PLL_ESTIMATOR
 * EXTERN
 **********************************************************************************************************************/
 extern PMSM_FOC_PLL_PI_t PMSM_FOC_PLL_PI;
-extern PMSM_FOC_PLL_ESTIMATOR_t PMSM_FOC_PLL_ESTIMATOR;;
+extern PMSM_FOC_PLL_ESTIMATOR_t PMSM_FOC_PLL_ESTIMATOR;
 
 /***********************************************************************************************************************
  * API Prototypes
@@ -136,10 +139,11 @@ PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_ImagGetResult(PMSM_FOC_PLL_ESTIMATOR_t* 
  * @param PMSM_FOC_PLL_ESTIMATOR_t handle pointer
  * @return None
  */
-PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_Vref (uint32_t vref_32, PMSM_FOC_PLL_ESTIMATOR_t* const handle_ptr);
+PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_Vref (uint32_t vref_32, PMSM_FOC_PLL_ESTIMATOR_t* const handle_ptr, PMSM_FOC_PLL_PI_t* const pi_pll_handle_ptr);
 /**
  * This function reads the calculated PLL observer internal signal value required for the estimator.
  * @param PLL Estimator structure pointer
+ * @param PLL PI controller structure pointer
  * @return None
  */
 PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_VrefGetResult(PMSM_FOC_PLL_ESTIMATOR_t* const handle_ptr);
@@ -149,7 +153,7 @@ PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_VrefGetResult(PMSM_FOC_PLL_ESTIMATOR_t* 
  * @param PLL PI controller structure pointer
  * @return None
  */
-PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_GetPosSpeed(PMSM_FOC_PLL_ESTIMATOR_t* const handle_ptr,PMSM_FOC_PLL_PI_t* const pll_pi_handle_ptr);
+PLL_LIB_RAM_ATTRIBUTE void PMSM_FOC_PLL_GetPosSpeed(PMSM_FOC_PLL_ESTIMATOR_t* const handle_ptr,PMSM_FOC_PLL_PI_t* const pi_pll_handle_ptr);
 
 /**
  * @}
