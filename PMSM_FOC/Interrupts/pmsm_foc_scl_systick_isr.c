@@ -43,6 +43,10 @@
 #include "../ControlModules/pmsm_foc_interface.h"
 #include "../ToolInterface/uCProbe.h"
 #include "../MCUInit/6EDL_gateway.h"
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+#include "../MCUInit/pmsm_foc_gpio.h"
+#include "../ToolInterface/Register.h"
+#endif
 
 /**
  * @addtogroup PMSM_FOC
@@ -75,11 +79,40 @@ void PMSM_FOC_SCL_ISR(void)
   /* Call Slow Control Loop task handler */
   SystemVar.GlobalTimer++;   /* this timer reaches 0xFFFFFFFF after 49.7 days */
   /* Configure/status monitoring of 6EDL7141 through GUI*/
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+  EDL7151_Update();
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
   EDL7141_Update();
+#endif
   switch (PMSM_FOC_CTRL.msm_state)
   {
+  case PMSM_FOC_MSM_OFF:
+    XMC_SCU_SetCcuTriggerLow(SCU_GENERAL_CCUCON_GSC80_Msk);    /* In case, the CCU8 module is initialized,Pull CCUCON signal to low to stop PWM */
+    PMSM_FOC_OFF_STATE_GPIO_Init();                            /* Configure the GPIO pin for OFF state diagnostic */
+    XMC_GPIO_SetOutputLow(GPIO_EN_DRV);                        /* set EN_DRV pin low */
+    EdlIo.en_drv_level = 0;
+    EDL7151_OFFstate_diagnose();                               /* enable OFF state diagnostic in gate driver register, toggle INLx, INHx pwm, read VDS sensor status for fault */
+    EdlIo.en_off_state_diagnostic = 0;                         /* disable OFF State diagnostic mode */
+    EDL7151_OFFstate_diagnose();
+    XMC_GPIO_SetOutputLow(OFFSTATE_DIAG_EN_PIN);               /* set OFFSTATE_DIAG_EN_PIN P4_9 low */
+    /* Check error status against enable fault */
+    MotorVar.MaskedFault.Value = MotorVar.error_status & MotorParam.EnableFault.Value;
+    if (MotorVar.MaskedFault.Value != PMSM_FOC_EID_NO_ERROR)
+    {
+      /* Next go to ERROR state & wait until it get cleared */
+      PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_ERROR;
+    }
+    else
+    {
+      PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_IDLE;
+    }
+    break;
   case PMSM_FOC_MSM_IDLE:
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+    if ((SystemVar.ParamConfigured == 1) && (SystemVar.Edl7151Configured == 1))
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
       if ((SystemVar.ParamConfigured == 1) && (SystemVar.Edl7141Configured == 1))
+#endif
     {
       if (idle_state_delay_counter <= 3)
       {
@@ -88,7 +121,6 @@ void PMSM_FOC_SCL_ISR(void)
       else if (idle_state_delay_counter > 3)
       {
         /* Initialize MCU and motor control peripherals */
-        EdlIo.en_drv_level = 1;
         PMSM_FOC_Init();
         /* Start the motor */
         PMSM_FOC_MotorStart();
@@ -111,7 +143,7 @@ void PMSM_FOC_SCL_ISR(void)
           {
             PMSM_FOC_SPEED_PI.uk_limit_max = PMSM_FOC_INPUT.limit_max_iq;
 
-            // During startup Vq voltage control is used and then it will switch to the speed current control
+            /* During startup Vq voltage control is used and then it will switch to the speed current control */
             if (PMSM_FOC_PLL_ESTIMATOR.rotor_speed > (2 * MotorParam.ELECTRICAL_SPEED_LOW_LIMIT_TS))
             {
               PMSM_FOC_CTRL.transition_status = PMSM_FOC_MOTOR_STATUS_STABLE;

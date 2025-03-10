@@ -76,7 +76,6 @@
  */
 void PMSM_FOC_CCU8_Init(void);
 
-
 /**
  * @param None
  * @return

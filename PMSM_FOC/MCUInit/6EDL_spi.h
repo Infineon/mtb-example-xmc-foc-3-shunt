@@ -45,10 +45,15 @@
 #include <xmc_common.h>
 #include "xmc_spi.h"
 #include "xmc_usic.h"
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
 #include "../Configuration/pmsm_foc_user_input_config.h"
 #include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../ToolInterface/Register.h"
-
+#else
+#include "../Configuration/pmsm_foc_user_input_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
+#include "../ToolInterface/Register.h"
+#endif
 /*********************************************************************************************************************
  * MACROS
  ********************************************************************************************************************/

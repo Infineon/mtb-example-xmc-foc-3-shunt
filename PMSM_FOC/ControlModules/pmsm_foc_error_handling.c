@@ -44,6 +44,7 @@
 #include "../Configuration/pmsm_foc_mcuhw_params.h"
 #include "../MCUInit/6EDL_spi.h"
 #include "../IPLib/pmsm_foc_ip.h"
+#include "../ToolInterface/Register.h"
 
 /**********************************************************************************************************************
  * MACRO's
@@ -141,6 +142,18 @@ void PMSM_FOC_ErrorHandling(void)
       /* Clear the error when fault_clear flag is set */
       MotorVar.error_status &= (~PMSM_FOC_EID_NFAULT_FAULT);
     }
+    /******************************************************************************************************************
+     * Error handling for OFF State diagnostic Fault
+     *****************************************************************************************************************/
+    if ((MotorVar.error_status & PMSM_FOC_EID_OFF_STATE_DIAG)&& MotorVar.MaskedFault.OffState == 1)
+    {
+      /* Clear all gate driver's Faults including latched faults */
+      write_word_16b(0x10, 0x03);   /* Write to gate driver's FAULTS_CLR register */
+      MotorVar.error_status &= (~PMSM_FOC_EID_OFF_STATE_DIAG);   /* Clear the error when fault_clear flag is set */
+      SystemVar.OffState_fault = 0x3f;                           /* Clear the SystemVar.OffState_fault */
+      PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_IDLE;
+    }
+
   }
 
   /* If all errors are cleared then go to STOP state */

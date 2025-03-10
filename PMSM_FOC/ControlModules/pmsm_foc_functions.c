@@ -123,7 +123,7 @@ void PMSM_FOC_VariablesInit(void)
 #if(USER_TORQUE_LIMITER == ENABLED)
   PMSM_FOC_INPUT.limit_max_iq = USER_IQ_LIMIT_Q15;
 #else
-  PMSM_FOC_INPUT.limit_max_iq = MAX_U_Q15;       // Reset to max limit
+  PMSM_FOC_INPUT.limit_max_iq = MAX_U_Q15;       /* Reset to max limit */
 #endif
 
   if (MotorParam.ControlScheme == VQ_VOLTAGE_CTRL)
@@ -152,7 +152,7 @@ void PMSM_FOC_VariablesInit(void)
   PMSM_FOC_OUTPUT.decoupling_iq = 0;
 
   PMSM_FOC_OUTPUT.svm_vref_16 = 0;
-  PMSM_FOC_OUTPUT.svm_angle_16 = 0;     // Init Vref angle θ = X°.
+  PMSM_FOC_OUTPUT.svm_angle_16 = 0;     /* Init Vref angle θ = X° */
 
   PMSM_FOC_OUTPUT.car2pol.vref_angle_q31 = PMSM_FOC_ANGLE_090_DEGREE_Q31;
 

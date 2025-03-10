@@ -64,6 +64,7 @@
 #define PMSM_FOC_EID_UNDER_VOLT_POS          (10U)
 #define PMSM_FOC_EID_SPI_FAULT_POS           (11U)
 #define PMSM_FOC_EID_NFAULT_FAULT_POS        (12U)
+#define PMSM_FOC_EID_OFF_STATE_FAULT_POS     (13U)
 
 /**********************************************************************************************************************
  * ENUMS
@@ -81,8 +82,8 @@ typedef enum PMSM_FOC_EID
   PMSM_FOC_EID_OVER_VOLT           = (1U << PMSM_FOC_EID_OVER_VOLT_POS),            /*!< Error ID 064 - DC BUS OVER VOLTAGE */
   PMSM_FOC_EID_UNDER_VOLT          = (1U << PMSM_FOC_EID_UNDER_VOLT_POS),           /*!< Error ID 1024 - DC BUS UNDER VOLTAGE */
   PMSM_FOC_EID_SPI_FAULT           = (1U << PMSM_FOC_EID_SPI_FAULT_POS),            /*!< SPI communication with 6EDL7141 fault, error status = 2048 */
-  PMSM_FOC_EID_NFAULT_FAULT        = (1U << PMSM_FOC_EID_NFAULT_FAULT_POS)          /*!< nFAULT from 6EDL7141 trigger, error status = 4096 */
-
+  PMSM_FOC_EID_NFAULT_FAULT        = (1U << PMSM_FOC_EID_NFAULT_FAULT_POS),          /*!< nFAULT from gate driver trigger, error status = 4096 */
+  PMSM_FOC_EID_OFF_STATE_DIAG      = (1U << PMSM_FOC_EID_OFF_STATE_FAULT_POS)        /*!< Error ID 8192 - OFF State */
 } PMSM_FOC_EID_t;
 
 /***********************************************************************************************************************

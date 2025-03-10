@@ -141,8 +141,8 @@
 #define  USER_MOTOR_R_PER_PHASE_OHM                 (0.36f)       /*!< Motor Resistance per phase in Ohm for PMSM Motor */
 #define  USER_MOTOR_LS_PER_PHASE_uH                 (600.0f)      /*!< Motor Inductance Ls per phase in uH  */
 #define  USER_MOTOR_POLE_PAIR                       (4.0f)        /*!< Motor Pole Pairs */
-#define  USER_SPEED_HIGH_LIMIT_RPM                  (6500U)       /*!< No load Speed of User Motor */
-#define  USER_SPEED_LOW_LIMIT_RPM                   (200U)        /*!< Min Speed of User Motor */
+#define  USER_SPEED_HIGH_LIMIT_RPM                  (6500U)       /*!< No load Speed of User Motor*/
+#define  USER_SPEED_LOW_LIMIT_RPM                   (200U)        /*!< Min Speed of User Motor*/
 #endif
 
 
@@ -229,6 +229,17 @@
 #define GUI_6EDL7141_INTEGRATION    SWD_MODE        /* 0: DISABLED, 2: SWD_MODE */
 #define WRITE_6EDL7141_REG_AT_INIT  ENABLED         /* 0: DISABLED, 1: ENABLED */
 
+/*********************************************************************************************************************
+ *                                      Configuration of 6EDL7151
+ ********************************************************************************************************************/
+#define PWM_MODE_6EDL7151           PWM_MODE_6
+#define PWM_MODE_1_HALL_ALT_RECIRC  DISABLED        /* 0: DISABLED, 1: ENABLED */
+#define CSAMP_GAIN_6EDL7151         0               /* 0 to disable all amplifiers, or CS_GAIN 4, 8, 12, 16, 24, 32, 64, 96 */
+
+/* Configuration of GUI 6EDL_SPI_LINK code */
+#define GUI_6EDL7151_INTEGRATION    SWD_MODE        /* 0: DISABLED, 2: SWD_MODE */
+#define WRITE_6EDL7151_REG_AT_INIT  ENABLED         /* 0: DISABLED, 1: ENABLED */
+
 /************************ Power board parameters **************************************************************/
 /* Power Inverter parameters */
 #define USER_VDC_LINK_V                             (24.0f)                         /*!< Inverter DC link voltage in Volts  */
@@ -242,6 +253,8 @@
 /*end of if  (MOTOR0_BLDC_SCALAR_BOARD == EVAL_IMD700A_FOC_3SH) */
 #elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
 #define USER_R_SHUNT_OHM                            (0.005f)                        /*!< Phase shunt resistor in ohm, eval board 0.005 */
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+#define USER_R_SHUNT_OHM                            (0.001f)                        /*!< Phase shunt resistor in ohm, eval board 0.001 */
 #endif
 
 #define N_ESPEED_RAD_FCL                            (float)(2*PI*((float)USER_SPEED_HIGH_LIMIT_RPM/60)*USER_MOTOR_POLE_PAIR*(1/(float)USER_CCU8_PWM_FREQ_HZ))
@@ -293,8 +306,8 @@
 #define USER_PI_FLUX_IK_LIMIT_MAX                       (1<<(30 - USER_PI_FLUX_SCALE_KPKI))         /* (1<<30 - scale). I[k] output limit HIGH. Normally no need change. */
 
 /* -----------------------------------------PLL Estimator PI Controller Parameters ---------------------------------------- */
-#define USER_PI_PLL_IK_LIMIT_MIN                        (-(int32_t)(1U << (30U-USER_PI_PLL_SCALE_KPKI))) /* I[k] output limit LOW. */
-#define USER_PI_PLL_IK_LIMIT_MAX                        (1U << (30U-USER_PI_PLL_SCALE_KPKI))//           /* I[k] output limit HIGH. */
+#define USER_PI_PLL_IK_LIMIT_MIN                        (-(int32_t)(1U << (30U-USER_PI_PLL_SCALE_KPKI)))  /* I[k] output limit LOW. */
+#define USER_PI_PLL_IK_LIMIT_MAX                        (1U << (30U-USER_PI_PLL_SCALE_KPKI))              /* I[k] output limit HIGH. */
 
 /**************** pmsm_foc_variables_scaling ****************************************************/
 

@@ -43,7 +43,7 @@
  * Hardware setup for sensorless FOC test
  **********************************************************************************************************************/
 /* Microcontroller:          XMC1404-Q064x0128, IMD701A-Q064X128
- * Power boards:             EVAL_6EDL7141_FOC_3SH, EVAL_IMD700A_FOC_3SH
+ * Power boards:             EVAL_6EDL7141_FOC_3SH, EVAL_IMD700A_FOC_3SH, EVAL_6EDL7151_FOC_3SH
  *
  * DB42S03 motor connection: Yellow     -> U of inverter
  *                           Red        -> V
@@ -63,7 +63,7 @@
 #include "PMSM_FOC/MCUInit/6EDL_gateway.h"
 #include "PMSM_FOC/MIDSys/pmsm_foc_debug.h"
 #include "PMSM_FOC/ToolInterface/Register.h"
-
+#include "PMSM_FOC/MCUInit/pmsm_foc_gpio.h"
 
 
 /*********************************************************************************************************************
@@ -74,7 +74,13 @@
 uint8_t idle_state_delay_counter;    /* have to add extra 3ms delay due to 6EDL7141 watchdog clock */
 
 extern void PMSM_FOC_SYSTICK_TimerInit(void);
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+extern void EDL7151_Config_init(void);
+extern void EDL7151_FLASH_parameter_load(void);
+#else
 extern void EDL7141_Config_init(void);
+extern void EDL7141_FLASH_parameter_load(void);
+#endif
 
 /*********************************************************************************************************************
  * API IMPLEMENTATION
@@ -114,11 +120,23 @@ int main(void)
   /* load parameter from flash, set ParamConfigured to 1 if load was succeed */
   FLASH_Parameter_load();
 
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+  XMC_GPIO_SetMode (OFFSTATE_DIAG_EN_PIN,XMC_GPIO_MODE_OUTPUT_PUSH_PULL);
+  /* set OFFSTATE_DIAG_EN_PIN P4_9 low */
+  XMC_GPIO_SetOutputLow(OFFSTATE_DIAG_EN_PIN);
+  /* initialize the OFF status diagnose variable to a no fault value */
+  SystemVar.OffState_fault = 0x3f;
+  /* load 6EDL7151 parameter from flash, set Edl7151Configured to 1 if load was succeed */
+  EDL7151_FLASH_parameter_load();
+  /* Initialize SPI interface with 6EDL7151, and 6EDL7151 related IO */
+  EDL7151_Config_init();
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
   /* load 6EDL7141 parameter from flash, set Edl7141Configured to 1 if load was succeed */
   EDL7141_FLASH_parameter_load();
-
   /* Initialize SPI interface with 6EDL7141, and 6EDL7141 related IO */
   EDL7141_Config_init();
+#endif
+
 
   /* Put motor control state machine to IDLE state */
   idle_state_delay_counter = 0;

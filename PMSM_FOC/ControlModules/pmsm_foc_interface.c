@@ -46,9 +46,7 @@
 #include "../MIDSys/pmsm_foc_pi.h"
 #include "../ToolInterface/ProbeScope/probe_scope.h"
 #include "../ToolInterface/uCProbe.h"
-//#include "../ControlModules/pmsm_foc_error_handling.h"
 #include "../MCUInit/pmsm_foc_clock.h"
-//#include "../ControlModules/pmsm_foc_state_machine.h"
 #include "../MIDSys/pmsm_foc_ramp_generator.h"
 #include "pmsm_foc_interface.h"
 

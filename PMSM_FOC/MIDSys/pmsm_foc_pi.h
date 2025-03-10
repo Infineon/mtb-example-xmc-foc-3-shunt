@@ -74,7 +74,6 @@
 #endif
 
 #ifndef ROUNDUP
-//#define ROUNDUP(x)       ((x - (int)x)==0 ? (int)x : (int)x+1)
 #define ROUNDUP(x)         ((x)>=0?(((x - (int)x)==0 ? (int)x : (int)x+1)):(((x - (int)x)==0 ? (int)x : (int)x-1)))
 #endif
 
@@ -95,6 +94,7 @@ typedef struct PMSM_FOC_PI
   uint16_t kp;                                /*!< Proportional gain Kp */
   uint16_t ki;                                /*!< Integral gain Ki */
   int16_t scale_kp_ki;                        /*!< Scale-up Kp and Ki by 2^Scale_KpKi */
+
 } PMSM_FOC_PI_t;
 
 /**********************************************************************************************************************
@@ -150,6 +150,7 @@ __STATIC_INLINE void PMSM_FOC_PI_Controller(int32_t reference, int32_t feedback,
 
   /* Check U[k] output limit */
   pi_handle_ptr->uk = MIN_MAX_LIMIT(temp_ik_uk, pi_handle_ptr->uk_limit_max, pi_handle_ptr->uk_limit_min);
+
 }
 
 
@@ -169,32 +170,34 @@ __STATIC_INLINE void PMSM_FOC_PI_Controller(int32_t reference, int32_t feedback,
 __STATIC_INLINE void PMSM_FOC_PI_AntiWindup(int32_t reference, int32_t feedback, int16_t feedforward, \
                                                                              PMSM_FOC_PI_t *pi_handle_ptr)
 {
-    int32_t temp_uk;
-    int32_t temp_kp_ff_error;
 
-    pi_handle_ptr->error = MIN_MAX_LIMIT((reference - feedback), 32767, -32767);
+      int32_t temp_uk;
+      int32_t temp_kp_ff_error;
 
-    temp_kp_ff_error = (int32_t)(pi_handle_ptr->kp * pi_handle_ptr->error);
-    temp_kp_ff_error += (int32_t)(feedforward << pi_handle_ptr->scale_kp_ki);
+      pi_handle_ptr->error = MIN_MAX_LIMIT((reference - feedback), 32767, -32767);
 
 
-    /* Integral output I[k] = I[k-1] + Ki * error[k] */
-    pi_handle_ptr->ik += (int32_t)(pi_handle_ptr->ki * pi_handle_ptr->error);
-
-    /* Dynamic error integral limit */
-    pi_handle_ptr->ik_limit_max = (MAX((pi_handle_ptr->uk_limit_max_scaled - temp_kp_ff_error), 0));
-    pi_handle_ptr->ik_limit_min = (MIN((pi_handle_ptr->uk_limit_min_scaled - temp_kp_ff_error), 0));
+      temp_kp_ff_error = (int32_t)(pi_handle_ptr->kp * pi_handle_ptr->error);
+      temp_kp_ff_error += (int32_t)(feedforward << pi_handle_ptr->scale_kp_ki);
 
 
-    /* Limit the integral buffer as per dynamic error integral limit  */
-    pi_handle_ptr->ik = MIN_MAX_LIMIT(pi_handle_ptr->ik, pi_handle_ptr->ik_limit_max, pi_handle_ptr->ik_limit_min);
+      /* Integral output I[k] = I[k-1] + Ki * error[k] */
+      pi_handle_ptr->ik += (int32_t)(pi_handle_ptr->ki * pi_handle_ptr->error);
+
+      /* Dynamic error integral limit */
+      pi_handle_ptr->ik_limit_max = (MAX((pi_handle_ptr->uk_limit_max_scaled - temp_kp_ff_error), 0));
+      pi_handle_ptr->ik_limit_min = (MIN((pi_handle_ptr->uk_limit_min_scaled - temp_kp_ff_error), 0));
 
 
-    /* PI output U[k] = Kp * error[k] + FF + I[k] */
-    temp_uk = (int32_t)((temp_kp_ff_error + pi_handle_ptr->ik) >> pi_handle_ptr->scale_kp_ki);
+      /* Limit the integral buffer as per dynamic error integral limit  */
+      pi_handle_ptr->ik = MIN_MAX_LIMIT(pi_handle_ptr->ik, pi_handle_ptr->ik_limit_max, pi_handle_ptr->ik_limit_min);
 
-    /* Check U[k] output limit */
-    pi_handle_ptr->uk = MIN_MAX_LIMIT(temp_uk, pi_handle_ptr->uk_limit_max, pi_handle_ptr->uk_limit_min);
+
+      /* PI output U[k] = Kp * error[k] + FF + I[k] */
+      temp_uk = (int32_t)((temp_kp_ff_error + pi_handle_ptr->ik) >> pi_handle_ptr->scale_kp_ki);
+
+      /* Check U[k] output limit */
+      pi_handle_ptr->uk = MIN_MAX_LIMIT(temp_uk, pi_handle_ptr->uk_limit_max, pi_handle_ptr->uk_limit_min);
 
 
 }

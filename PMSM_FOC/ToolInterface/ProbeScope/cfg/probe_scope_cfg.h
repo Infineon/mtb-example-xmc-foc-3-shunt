@@ -57,7 +57,6 @@
 */
 
 // Select probe scope parameters by these macros
-//#define DEFAULT_PROBE_SCOPE_PARAMETERS
 #define BPA_MOTOR_CONTROL_GUI_PARAMETERS
 
 

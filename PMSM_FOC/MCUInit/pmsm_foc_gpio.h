@@ -75,6 +75,22 @@
  */
 void PMSM_FOC_GPIO_Init(void);
 
+/*  Data Structure initialization - GPIO Configuration for Gate Driver */
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+
+/**
+ * @param None
+ * @return
+ *    None<BR>
+ *
+ * \par<b>Description:</b><br>
+ * Initializes GPIO pins used for OFF state diagnostic. <BR>\n
+ *
+ * \par<b>Related APIs:</b><br>
+ * None.
+ */
+extern void PMSM_FOC_OFF_STATE_GPIO_Init(void);
+#endif
 /**
  * @}
  */

@@ -42,7 +42,7 @@ MTB_TYPE=COMBINED
 # configurations. If TARGET is manually edited, ensure TARGET_<BSP>.mtb with a
 # valid URL exists in the application, run 'make getlibs' to fetch BSP contents
 # and update or regenerate launch configurations for your IDE.
-TARGET=EVAL_6EDL7141_FOC_3SH
+TARGET=EVAL_6EDL7151_36V_1KW
 
 # Name of application (used to derive name of final linked file).
 #
@@ -112,7 +112,11 @@ DEFINES += PROGRAM_DEFAULT_PARAM=0
 
 ifeq ($(TARGET),APP_EVAL_6EDL7141_FOC_3SH)
 DEFINES += MOTOR0_PMSM_FOC_BOARD=EVAL_6EDL7141_FOC_3SH
-else #ifeq ($(TARGET),APP_EVAL_IMD700A_FOC_3SH)
+endif
+ifeq ($(TARGET),APP_EVAL_6EDL7151_36V_1KW)
+DEFINES += MOTOR0_PMSM_FOC_BOARD=EVAL_6EDL7151_FOC_3SH
+endif
+ifeq ($(TARGET),APP_EVAL_IMD700A_FOC_3SH)
 DEFINES += MOTOR0_PMSM_FOC_BOARD=EVAL_IMD700A_FOC_3SH
 endif
 

@@ -1,13 +1,15 @@
-# XMC&trade; MCU: MOTIX&trade; 6EDL7141 and IMD700A sensorless FOC 3-shunt
+# XMC&trade; MCU:MOTIX&trade; 6EDL71x1 and IMD700A Sensorless FOC 3-shunt
 
-This code example works with both the MOTIX&trade; 6EDL7141 3-shunt field oriented control (FOC) sensorless and MOTIX&trade; IMD700A 3-shunt FOC sensorless projects in the MOTIX&trade; Battery Powered Application (BPA) Motor Control Workbench to illustrate sensorless FOC motor control on [EVAL_6EDL7141_FOC_3SH](https://www.infineon.com/dgdl/Infineon-Evaluation_Board_EVAL_6EDL7141_FOC_3SH-UserManual-v01_00-EN.pdf?fileId=8ac78c8c82ce566401830db3784605f9) and [EVAL_IMD700A_FOC_3SH](https://www.infineon.com/dgdl/Infineon-Evaluation_board_EVAL_IMD700A_FOC_3SH-ApplicationNotes-v01_00-EN.pdf?fileId=8ac78c8c7fb5929e017fdf3691800b9d) evaluation boards for FOC motor drive based on the MOTIX&trade; 6EDL7141 smart 3-phase driver and MOTIX&trade; IMD701A motor controller IC.
+This code example works with MOTIX&trade; 6EDL7151 3-shunt field-oriented control (FOC) sensorless 3-shunt FOC sensorless projects in the ModusToolbox&trade; Motor Suite GUI to illustrate sensorless FOC motor control on [EVAL_6EDL7151_FOC_3SH](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/#!documents) evaluation boards for FOC motor drive based on the MOTIX&trade; 6EDL7151 smart 3-phase driver.
+
+This code example also works with both the MOTIX&trade; 6EDL7141 3-shunt FOC sensorless and MOTIX&trade; IMD700A 3-shunt FOC sensorless projects in the ModusToolbox&trade; Motor Suite GUI to illustrate sensorless FOC motor control on [EVAL_6EDL7141_FOC_3SH](https://www.infineon.com/dgdl/Infineon-Evaluation_Board_EVAL_6EDL7141_FOC_3SH-UserManual-v01_00-EN.pdf?fileId=8ac78c8c82ce566401830db3784605f9) and [EVAL_IMD700A_FOC_3SH](https://www.infineon.com/dgdl/Infineon-Evaluation_board_EVAL_IMD700A_FOC_3SH-ApplicationNotes-v01_00-EN.pdf?fileId=8ac78c8c7fb5929e017fdf3691800b9d) evaluation boards for FOC motor drive based on the MOTIX&trade; 6EDL7141 smart 3-phase driver and MOTIX&trade; IMD701A motor controller IC. However, this will involve changes to the `TARGET` definition in the Makefile of the project.
 
 
 ## Requirements
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.0 or later (tested with v3.0)
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.0 or later (tested with v3.1)
 - [SEGGER J-Link](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack) software
-- [ModusToolbox&trade; Motor Suite](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.ifxmotorsolutions) software (formerly MOTIX&trade; BPA Motor Control Workbench)  
+- [ModusToolbox&trade; Motor Suite GUI](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.ifxmotorsolutions) software (formerly MOTIX&trade; BPA Motor Control Workbench)
 - Programming language: C
 - Associated parts: All [MOTIX&trade; 6EDL7141](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/6edl7141/) parts, all [MOTIX&trade; IMD701A](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd701a-q064x128-aa/) parts
 
@@ -18,8 +20,9 @@ This code example works with both the MOTIX&trade; 6EDL7141 3-shunt field orient
 
 ## Supported boards (make variable 'TARGET')
 
-- [EVAL_IMD700A_FOC_3SH Evaluation Board - sensorless FOC motor drive based on the MOTIX&trade; IMD701A motor controller](https://www.infineon.com/cms/en/product/evaluation-boards/eval_imd700a_foc_3sh/) (`EVAL_IMD700A_FOC_3SH`) – Default value of `TARGET`
+- [EVAL_IMD700A_FOC_3SH Evaluation Board - sensorless FOC motor drive based on the MOTIX&trade; IMD701A motor controller](https://www.infineon.com/cms/en/product/evaluation-boards/eval_imd700a_foc_3sh/) (`EVAL_IMD700A_FOC_3SH`)
 - [EVAL_6EDL7141_FOC_3SH Evaluation Board - sensorless FOC motor drive based on the MOTIX&trade; 6EDL7141 smart 3-phase driver](https://www.infineon.com/cms/en/product/evaluation-boards/eval_6edl7141_foc_3sh/) (`EVAL_6EDL7141_FOC_3SH`)
+- [EVAL_6EDL7151_FOC_3SH Evaluation Board - sensorless FOC motor drive based on the MOTIX&trade; 6EDL7151 smart 3-phase driver](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/#!designsupport) (`EVAL_6EDL7151_36V_1kW`) – Default value of `TARGET`
 
 
 ## Hardware setup
@@ -31,7 +34,7 @@ This example uses the board's default configuration. See the board user guide to
 
 See the [ModusToolbox&trade; tools package installation guide](https://www.infineon.com/ModusToolboxInstallguide) for information about installing and configuring the tools package.
 
-This example is compatible with the [MOTIX&trade; BPA Motor Control Workbench](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.ifxmotorsolutions) software. Before you can install this tool, install the [Infineon Developer Center Launcher](https://www.infineon.com/cms/en/design-support/tools/utilities/infineon-developer-center-idc-launcher/) application. To interact with the MOTIX&trade; BPA Motor Control Workbench, see the [Design and implementation](#design-and-implementation) section. This code example can be compiled in Debug mode to ensure the full compatibility features with the MOTIX&trade; BPA Motor Control Workbench.
+This example is compatible with the [ModusToolbox&trade; Motor Suite GUI](https://softwaretools.infineon.com/tools/com.ifx.tb.tool.ifxmotorsolutions) software. Before you can install this tool, install the [Infineon Developer Center Launcher](https://www.infineon.com/cms/en/design-support/tools/utilities/infineon-developer-center-idc-launcher/) application. To interact with the ModusToolbox&trade; Motor Suite GUI, see the [Design and implementation](#design-and-implementation) section. This code example can be compiled in Debug mode to ensure the full compatibility features with the ModusToolbox&trade; Motor Suite GUI.
 
 
 ## Using the code example
@@ -73,10 +76,10 @@ The 'project-creator-cli' tool can be used to create applications from a CLI ter
 
 Use a CLI terminal to invoke the 'project-creator-cli' tool. On Windows, use the command-line 'modus-shell' program provided in the ModusToolbox&trade; installation instead of a standard Windows command-line application. This shell provides access to all ModusToolbox&trade; tools. You can access it by typing "modus-shell" in the search box in the Windows menu. In Linux and macOS, you can use any terminal application.
 
-The following example clones the "[mtb-example-xmc-foc-3-shunt](https://github.com/Infineon/mtb-example-xmc-foc-3-shunt)" application with the desired name "Sensorless_FOC_3_Shunt" configured for the *EVAL_IMD700A_FOC_3SH* BSP into the specified working directory, *C:/mtb_projects*:
+The following example clones the "[mtb-example-xmc-foc-3-shunt](https://github.com/Infineon/mtb-example-xmc-foc-3-shunt)" application with the desired name "Sensorless_FOC_3_Shunt" configured for the *EVAL_6EDL7151_36V_1kW* BSP into the specified working directory, *C:/mtb_projects*:
 
    ```
-   project-creator-cli --board-id EVAL_IMD700A_FOC_3SH --app-id mtb-example-xmc-foc-3-shunt --user-app-name Sensorless_FOC_3_Shunt --target-dir "C:/mtb_projects"
+   project-creator-cli --board-id EVAL_6EDL7151_36V_1kW --app-id mtb-example-xmc-foc-3-shunt --user-app-name Sensorless_FOC_3_Shunt --target-dir "C:/mtb_projects"
    ```
 
 
@@ -183,11 +186,11 @@ Follow the instructions in your preferred IDE.
 
 ## Design and implementation
 
-This example runs a BLDC motor using sensorless FOC motor control. Then, the hex code generated by this code example can be downloaded to the EVAL_6EDL7141_FOC_3SH or EVAL_IMD700A_FOC_3SH board via the MOTIX&trade; BPA Motor Control Workbench.
+This example runs a brushless DC (BLDC) motor using sensorless FOC motor control. Then, the hex code generated by this code example can be downloaded to the EVAL_6EDL7141_FOC_3SH, or EVAL_IMD700A_FOC_3SH, or EVAL_6EDL7151_FOC_3SH board via the ModusToolbox&trade; Motor Suite GUI. However, before generating the hex code, ensure that the `TARGET` definition in the Makefile is set to the desired evaluation board.
 
-To customize the code example for your application, expand the *Application Notes* folder in the **Documents** section, [AN_2110_PL88_2202_070459 - PMSM FOC motor control software using MOTIX&trade; 6EDL7141 and MOTIX&trade; IMD700A](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents).
+To customize the code example for your application, see the appropriate application note which can be found by expanding the *Application Notes* folder in the **Documents** section, [AN070459 - PMSM FOC motor control software using MOTIX&trade; 6EDL7141 and MOTIX&trade; IMD700A](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents) or [AN043426 - PMSM FOC motor control software using MOTIX&trade; 6EDL7151](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/6edl7151/#!documents).
 
-With the MOTIX&trade; BPA Motor Control Workbench, you can configure the following options:
+With the ModusToolbox&trade; Motor Suite GUI, you can configure the following options:
 
 - Select the control mode as one of the following:
    - Speed control mode
@@ -202,13 +205,13 @@ With the MOTIX&trade; BPA Motor Control Workbench, you can configure the followi
    - DC link undervoltage protection
 
 
-### MOTIX&trade; 6EDL7141 smart gate driver support
+### MOTIX&trade; 6EDL7141 and MOTIX&trade; 6EDL7151 smart gate driver support
 
-- Low-level read/write MOTIX&trade; 6EDL7141 registers through the SPI interface
+- Low-level read/write MOTIX&trade; 6EDL7141 or MOTIX&trade; 6ELD7151 registers through the SPI interface
 - High-level 6EDL gateway provides an interface to the application code
 
 
-### MOTIX&trade; BPA Motor Control Workbench's oscilloscope support
+### ModusToolbox&trade; Motor Suite GUI's oscilloscope support
 
 - 4-channel scope
 - Trace signal of each channel can be changed on-the-fly
@@ -228,9 +231,9 @@ Connect the motor's phase U, V, and W cables to the board as follows:
 
 Motor    | Board
 ---------| --------
-Phase U  | U (J3)
-Phase V  | V (J4)
-Phase W  | W (J5)
+Phase U  | U (J4)
+Phase V  | V (J5)
+Phase W  | W (J6)
 
 <br>
 
@@ -267,15 +270,15 @@ Phase W  | W (J5)
 
   - To start the motor:
     
-   ```
-   PMSM_FOC_MotorStart();                   // Sets motor_start flag
-   ADC.adc_res_pot = 2048;                  // Sets adc_res_pot to 2048 = 50% nominal speed (speed mode) or 50% duty cycle (voltage mode)
-   ```
+    ```
+    PMSM_FOC_MotorStart();                   // Sets motor_start flag
+    ADC.adc_res_pot = 2048;                  // Sets adc_res_pot to 2048 = 50% nominal speed (speed mode) or 50% duty cycle (voltage mode)
+    ```
   - To stop the motor:
     
-   ```
-   ucProbe_cmd = 16;  // Sets motor stop command
-   ```
+    ```
+    ucProbe_cmd = 16;  // Sets motor stop command
+    ```
     
   Scaling of `ADC.adc_res_pot` is Q12(4096=1PU), which means that `ADC.adc_res_pot` at the max value is 4096.
 
@@ -288,21 +291,22 @@ Phase W  | W (J5)
    ```
    MotorVar.MaskedFault.Value = MotorVar.error_status & MotorParam.EnableFault
    ```
-- A fault can be enabled/disabled by setting/clearing the corresponding bit in the `MotorParam.EnableFault` parameter. Its value is calculated by the Motor Control Workbench.
+- A fault can be enabled/disabled by setting/clearing the corresponding bit in the `MotorParam.EnableFault` parameter. Its value is calculated by the ModusToolbox&trade; Motor Suite GUI.
 
 - To clear the fault, do one of the following:
 
    - **Option 1:** Write `ucProbe_cmd` to '3'. After this command is received, the firmware will write `MotorVar.fault_clear` to '1'.
 
-   ```
-   ucProbe_cmd = 3;  // Control word 3: clear fault. Firmware will then set `MotorVar.fault_clear` to '1' after receiving this control word command
-   ```
+     ```
+     ucProbe_cmd = 3;  // Control word 3: clear fault. Firmware will then set `MotorVar.fault_clear` to '1' after receiving this control word command
+     ```
+
   - **Option 2** (Preferred): Directly write `MotorVar.fault_clear` to '1'.
   
-   ```
-   MotorVar.fault_clear = 1;                     // Directly sets the clear fault flag
-   ```
-- The detected faults will be stored in a different bit position of the 'MotorVar.error_status' variable. E.g., a '1' at bit 12 position indicates nFault from 6EDL7141 detected, a '1' at bit 10 position indicates DC link undervoltage detected, a '1' at bit 4 position indicates DC link overvoltage detected.
+    ```
+    MotorVar.fault_clear = 1;                     // Directly sets the clear fault flag
+    ```
+- The detected faults will be stored in a different bit position of the 'MotorVar.error_status' variable. E.g., a '1' at bit 12 position indicates nFault from MOTIX&trade; 6EDL7141 or MOTIX&trade; 6EDL7151 detected, a '1' at bit 10 position indicates DC link undervoltage detected, a '1' at bit 4 position indicates DC link overvoltage detected.
 - Board temperature from MCP9700 is sampled, filtered, and converted to degree celsius. To read the board temperature:
   
    ```
@@ -313,7 +317,7 @@ Phase W  | W (J5)
 
 There are two types of parameters:
 
-- **User input:** User input parameters are usually presented in engineering units (volt, amps, RPM, etc.) which can be configure based on the application requirements.
+- **User input:** User input parameters are usually presented in engineering units (volt, amps, RPM, etc.) which can be configured based on the application requirements.
 
 - **Internal parameters:** Internal parameters are actual parameters that are being used by the firmware. Most internal parameters use different scaling to ensure efficient code execution and cannot be easy to be understood.
 
@@ -321,11 +325,11 @@ One key feature of the Motor Control GUI is the ability to calculate the interna
 
 In the firmware, user inputs are `#define` in the *Configuration/pmsm_foc_user_input_config.h* header file; the conversion function is in the C source file, *ToolInterface/Register.c*.
 
-All internal parameters related to motor control are grouped in the `MotorParam` data structure; configure this structure correctly before the motor could run. Use the MOTIX&trade; BPA Motor Control Workbench to enter the user input and let the tool calculate the internal parameter value, and then click **Write Parameter** to write all internal parameters into the MCU's RAM. After completing this step, the motor should be ready to run.
+All internal parameters related to motor control are grouped in the `MotorParam` data structure; configure this structure correctly before the motor could run. Use the ModusToolbox&trade; Motor Suite GUI to enter the user input and let the tool calculate the internal parameter value, and then click **Write Parameter** to write all internal parameters into the MCU's RAM. After completing this step, the motor should be ready to run.
 
-You can save the parameters into the MCU so that the next time when the board powers up, the motor is ready to run immediately. A location inside the MCU's flash memory is designated for storing the internal parameters. Click **Write to Flash** in the MOTIX&trade; Motor Control Workbench to store the internal parameters into the flash memory.
+You can save the parameters into the MCU so that the next time when the board powers up, the motor is ready to run immediately. A location inside the MCU's flash memory is designated for storing the internal parameters. Click **Write to Flash** in the ModusToolbox&trade; Motor Suite GUI to store the internal parameters into the flash memory.
 
-All 6EDL7141 config registers are handled in a similar way.
+All MOTIX&trade; 6EDL7141 or MOTIX&trade; 6EDL7151 config registers are handled in a similar way.
 
 To write both `MotorParam` and `Edl7141Reg` into the flash, set the control word to '4':
 
@@ -336,31 +340,31 @@ ucProbe_cmd = 4;    // Control word 4: program parameter RAM value into flash me
 
 ### Using the oscilloscope
 
-Scope traces are no longer selected in the oscilloscope page. The register map defined in the *Register.c* file contains the TraceID, variable, data type, and bit field (if in use). Change `ProbeScope_Chx.TraceId` (x = 1, 2, 3, or 4) to select a different trace signal for each scope channel so that the MOTIX&trade; Motor Control Workbench can select the scope signal in Test Bench view.
+Scope traces are selected in the oscilloscope tool of the ModusToolbox&trade; Motor Suite GUI.
 
 
-### Controlling MOTIX&trade; 6EDL7141 smart gate driver and MOTIX&trade; IMD700A motor controller
+### Controlling MOTIX&trade; 6EDL7141, MOTIX&trade; 6EDL7151 smart gate driver, and MOTIX&trade; IMD700A motor controller
 
 The EN_DRV pin output level ('1' or '0') from XMC1400 MCU is controlled by `EdlIo.en_drv_level`. Note that the motor state machine controls the EN_DRV pin in some state changes; the EN_DRV pin control is valid only if there is no motor control state change.
 
 The nBrake pin output level ('1' or '0') from XMC1400 MCU is controlled by `EdlIo.nbrake_level`. Note that the nBrake pin control is independent of motor control.
 
-> **Note:** EN_DRV and nBrake control are only for testing the MOTIX&trade; 6EDL7141 smart gate driver function. If nBrake is set to a low level manually while the motor is running, it can cause faults such as stall error. In such cases, set nBrake to a high level, clear the fault, and verify that the motor is in ‘STOP’ state before running the motor again. Do not set EN_DRV to a low level while the motor is running.
+> **Note:** EN_DRV and nBrake control are only for testing the MOTIX&trade; 6EDL7141 and MOTIX&trade; 6EDL7151 smart gate driver function. If nBrake is set to a low level manually while the motor is running, it can cause faults such as stall error. In such cases, set nBrake to a high level, clear the fault, and verify that the motor is in ‘STOP’ state before running the motor again. Do not set EN_DRV to a low level while the motor is running.
 
-DC calibration control can be turned on or off by writing '1' or '0' to the MOTIX&trade; 6EDL7141 configure register bitfield `CSAMP_CFG[11]`.
+DC calibration control can be turned on or off by writing '1' or '0' to the MOTIX&trade; 6EDL7141 or MOTIX&trade; 6ELD7151 configure register bitfield `CSAMP_CFG[11]`.
 
-ADC input selection (Idigital/DVDD/VDDB) is written to the MOTIX&trade; 6EDL7141 configure register bitfield `ADC_CFG[2:1]`.
+ADC input selection (Idigital/DVDD/VDDB) is written to the MOTIX&trade; 6EDL7141 or MOTIX&trade; 6ELD7151 configure register bitfield `ADC_CFG[2:1]`.
 
-An ADC request is initiated by writing '1' to the MOTIX&trade; 6EDL7141 configure register bitfield `ADC_CFG[0]`.
+An ADC request is initiated by writing '1' to the MOTIX&trade; 6EDL7141 or MOTIX&trade; 6ELD7151 configure register bitfield `ADC_CFG[0]`.
 
 
 ## Firmware code overview
 
-This firmware code example can integrate with the MOTIX&trade; BPA Motor Control Workbench to provide an easy user configuration for the motor control system.
+This firmware code example can integrate with the ModusToolbox&trade; Motor Suite GUI to provide an easy user configuration for the motor control system.
 
-The code has stored most of the configurations in the `MotorParam` structure. Those parameters in this structure have internal scaling. The MOTIX&trade; BPA Motor Control Workbench is designed to take the user input (user input parameter) and convert it into internal parameter values in `MotorParam`. This means that these parameters can be changed without recompiling or reflashing the code.
+The code has stored most of the configurations in the `MotorParam` structure. Those parameters in this structure have internal scaling. The ModusToolbox&trade; Motor Suite GUI is designed to take the user input (user input parameter) and convert it into internal parameter values in `MotorParam`. This means that these parameters can be changed without recompiling or reflashing the code.
 
-If you choose not to use the MOTIX&trade; BPA Motor Control Workbench for parameter configuration, this process can be simulated by taking the user input into *user_input_config.h* file, and then converting it into internal parameter values by using the `parameter_set_default()` function in *parameter_bldc.c* file. This function will be called once during code initialization; it initializes the parameters in the `MotorParam` structure into default values. These values can be changed by modifying the member values in the `MotorParam` structure directly.
+If you choose not to use the ModusToolbox&trade; Motor Suite GUI for parameter configuration, this process can be simulated by taking the user input into *user_input_config.h* file, and then converting it into internal parameter values by using the `PROGRAM_DEFAULT_PARAM = 1` macro in *Makefile* file of the project. This macro will be used during code initialization; it initializes the parameters in the `MotorParam` structure into default values. These values can be changed by modifying the member values in the `MotorParam` structure directly.
 
 A different control scheme can be switched at the motor stop state by changing the value in `MotorParam.ControlScheme`.
 
@@ -377,38 +381,38 @@ The project uses the default *design.modus* file.
 This section lists the current known limitations of the system.
 
 
-### Supported operating modes between the Motor Control Workbench and code example
+### Supported operating modes between the ModusToolbox&trade; Motor Suite GUI and code example
 
-Currently, the following two modes of operations are supported in using the MOTIX&trade; BPA Motor Control Workbench and the code example itself in source code form:
+Currently, the following two modes of operations are supported in using the ModusToolbox&trade; Motor Suite GUI and the code example itself in source code form:
 
-- **Using the MOTIX&trade; BPA Motor Control Workbench**
+- **Using the ModusToolbox&trade; Motor Suite GUI**
 
-   Use the MOTIX&trade; BPA Motor Control Workbench for evaluation of the code example performance and tuning the parameters by flashing the board using the programming features of the MOTIX&trade; BPA Motor Control Workbench. For this, supply both the HEX and ELF artifacts of the build to the tool following the on-screen prompts. Using this method, the tool will always overwrite the motor control parameters that are defined in the firmware source code. Therefore, editing of parameters is possible only through the MOTIX&trade; BPA Motor Control Workbench.
+   Use the ModusToolbox&trade; Motor Suite GUI for evaluation of the code example performance and tuning the parameters by flashing the board using the programming features of the ModusToolbox&trade; Motor Suite GUI. For this, supply both the HEX and ELF artifacts of the build to the tool following the on-screen prompts. Using this method, the tool will always overwrite the motor control parameters that are defined in the firmware source code. Therefore, editing of parameters is possible only through the ModusToolbox&trade; Motor Suite GUI.
 
-   Use all MOTIX&trade; BPA Motor Control Workbench features to modify the parameters, control the motor, and observe the application performance. This option is intended for early evaluation of the related kit and firmware or for fine-tuning the motor control parameters in a graphical way.
+   Use all ModusToolbox&trade; Motor Suite GUI features to modify the parameters, control the motor, and observe the application performance. This option is intended for early evaluation of the related kit and firmware or for fine-tuning the motor control parameters in a graphical way.
 
 - **Using the code example in source code form with ModusToolbox&trade;**
 
-   If you use the code example in source code format and modify the parameters of the application, motor control, or MCU, compatibility with the MOTIX&trade; BPA Motor Control Workbench cannot be guaranteed and can lead to unexpected behavior. This applies especially to modifying motor control parameters that are automatically overwritten in the tool as mentioned above. Use this option if you want to edit the firmware source code or tune the parameters in the source code.
+   If you use the code example in source code format and modify the parameters of the application, motor control, or MCU, compatibility with the ModusToolbox&trade; Motor Suite GUI cannot be guaranteed and can lead to unexpected behavior. This applies especially to modifying motor control parameters that are automatically overwritten in the tool as mentioned above. Use this option if you want to edit the firmware source code or tune the parameters in the source code.
 
 
 ### Oscillation in motor RPM against the set target
 
 In normal operation with a running motor in speed control mode, the observable motor RPM can be slightly different from the specified target speed. This variation from the target speed is dependent on the PI tuning of the control loop and whether the motor is loaded or running free.
 
-This code example is not fine-tuned for any specific motor. Fine-tuning of the motor control parameters can be done either in firmware or by using the MOTIX&trade; BPA Motor Control Workbench.
+This code example is not fine-tuned for any specific motor. Fine-tuning of the motor control parameters can be done either in firmware or by using the ModusToolbox&trade; Motor Suite GUI.
 
 
 ## Related resources
 
 Resources  | Links
 -----------|----------------------------------
-Application notes | [AN_2112_PL88_2112_011208 - EVAL_IMD700A_FOC_3SH 18 V brushless DC motor drive board](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents) <br> [AN_2201_PL88_2202_025343 - Sensorless FOC tuning guide for BPA motor control GUI](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents)
+Application notes | [AN_2112_PL88_2112_011208 - EVAL_IMD700A_FOC_3SH 18 V brushless DC motor drive board](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents) <br> [AN_2201_PL88_2202_025343 - Sensorless FOC tuning guide for BPA motor control GUI](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents) <br> [AN043426 - PMSM FOC motor control software using MOTIX&trade; 6EDL7151](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/6edl7151/#!documents)
 Code examples  | [Using ModusToolbox&trade; software](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software) on GitHub
-Device documentation | [MOTIX&trade; 6EDL7141 datasheets](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/6edl7141/#!documents); [MOTIX&trade; IMD700A datasheets](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents)
-Development kits | [MOTIX&trade; 6EDL7141 eval boards](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/6edl7141/#!boards); [MOTIX&trade; IMD700A eval boards](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!boards)
+Device documentation | [MOTIX&trade; 6EDL7141 datasheets](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/6edl7141/#!documents); [MOTIX&trade; IMD700A datasheets](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!documents); [MOTIX&trade; 6EDL7151 datasheets](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/#!documents)
+Development kits | [MOTIX&trade; 6EDL7141 eval boards](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/6edl7141/#!boards); [MOTIX&trade; IMD700A eval boards](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-driver-ics/battery-supplied-bldc-motor-controller-ics/imd700a-q064x128-aa/#!boards); [MOTIX&trade; 6EDL7151 eval boards](https://www.infineon.com/cms/en/product/power/motor-control-ics/bldc-motor-control-ics/battery-supplied-bldc-motor-controller-ics/#!documents)
 Libraries on GitHub | [mtb-xmclib-cat3](https://github.com/Infineon/mtb-xmclib-cat3) – XMC&trade; Peripheral Driver Library (XMCLib)
-Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use libraries and tools enabling rapid development with Infineon MCUs for applications ranging from wireless and cloud-connected systems, edge AI/ML, embedded sense and control, to wired USB connectivity using PSoC&trade; Industrial/IoT MCUs, AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices, XMC&trade; Industrial MCUs, and EZ-USB&trade;/EZ-PD&trade; wired connectivity controllers. ModusToolbox&trade; incorporates a comprehensive set of BSPs, HAL, libraries, configuration tools, and provides support for industry-standard IDEs to fast-track your embedded application development.
+Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use libraries and tools enabling rapid development with Infineon MCUs for applications ranging from wireless and cloud-connected systems, edge AI/ML, embedded sense and control, to wired USB connectivity using PSOC&trade; Industrial/IoT MCUs, AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices, XMC&trade; Industrial MCUs, and EZ-USB&trade;/EZ-PD&trade; wired connectivity controllers. ModusToolbox&trade; incorporates a comprehensive set of BSPs, HAL, libraries, configuration tools, and provides support for industry-standard IDEs to fast-track your embedded application development.
 
 <br>
 
@@ -422,12 +426,13 @@ For XMC&trade; MCU devices, see [32-bit XMC&trade; industrial microcontroller ba
 
 ## Document history
 
-Document title: *CE237314* – *XMC&trade; MCU: MOTIX&trade; 6EDL7141 and IMD700A sensorless FOC 3-shunt* 
+Document title: *CE237314* – *XMC&trade; MCU: MOTIX&trade; 6EDL7141, 6EDL7151, and IMD700A sensorless FOC 3-shunt* 
 
  Version | Description of change
  ------- | ---------------------
  0.5.0   | Initial version
- 0.5.1   | Bug fixes and Probe Scope update supporting arbitrary variables access from MOTIX&trade; BPA Motor Control Workbench. This enables users to observe any variables in Oscilloscope and Custom GUI Builder features
+ 0.5.1   | Bug fixes and Probe Scope update supporting arbitrary variables access from ModusToolbox&trade; Motor Suite GUI. This enables users to observe any variables in Oscilloscope and Custom GUI Builder features
+ 0.5.2   | Adding code to support features available in MOTIX&trade; 6EDL7151 device
 <br>
 
 

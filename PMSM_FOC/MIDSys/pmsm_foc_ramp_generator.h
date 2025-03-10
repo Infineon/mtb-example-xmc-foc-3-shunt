@@ -71,7 +71,7 @@
 void PMSM_FOC_LinearRampGenerator(int32_t SetVal, int32_t RampUpRate, int32_t RampDownRate,
                                          int32_t SpeedRampStep, int32_t *ReferenceVal);
 
-#endif //End of #ifndef PMSM_FOC_RAMP_GEN_H_
+#endif  /* End of #ifndef PMSM_FOC_RAMP_GEN_H_*/
 /**
  * @}
  */

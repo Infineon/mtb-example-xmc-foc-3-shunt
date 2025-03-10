@@ -75,6 +75,7 @@
 #define BRAKE_EN_PIN           P1_3     /* Active Low for motor braking*/
 #define AUTO_ZERO_PIN          P1_2     /* Input pin to control Auto-Zero function */
 #define DRV_CLK_EN_PIN         P2_13    /* Watchdog clock on EN_DRV pin */
+#define OFFSTATE_DIAG_EN_PIN   P4_9     /* Active High to provide bias to SHx node */
 
 #define MOTOR_DIR_INPUT_PIN    P4_10
 
@@ -209,7 +210,7 @@
 #if(INTERNAL_OP_GAIN == ENABLED)
 #define OP_GAIN_FACTOR            (3U)                           /* Different HW Board has different OP Gain factor, XMC13/XMC14 built-in Gain Factor available 1, 3, 6 and 12 only*/
 #elif(INTERNAL_OP_GAIN == DISABLED)
-#define OP_GAIN_FACTOR            (12U) //MotorParam.G_OPAMP_PER_PHASECURRENT       /* External opamp gain factor */
+#define OP_GAIN_FACTOR            (12U)                          /* External opamp gain factor */
 #endif
 
 

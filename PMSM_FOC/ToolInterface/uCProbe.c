@@ -158,7 +158,11 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
       /*Erase and write 256 byte of data from MotorParam, PI_CONFIG and Edl7141Reg */
       XMC_FLASH_ProgramVerifyPage(ParameterBlock_Addr, (uint32_t *)&MotorParam); /*Address, data*/
       XMC_FLASH_ProgramVerifyPage(motor_PI_config_addr, (uint32_t *)&PI_CONFIG); /*Address, data*/
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+      XMC_FLASH_ProgramVerifyPage(Edl7151ParameterBlock_Addr, (uint32_t *)&Edl7151Reg); /*Address, data*/
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
       XMC_FLASH_ProgramVerifyPage(Edl7141ParameterBlock_Addr, (uint32_t *)&Edl7141Reg); /*Address, data*/
+#endif
       /* Enable IRQ */
       NVIC_EnableIRQ(CCU80_0_IRQn);
       /* Command is processed */
@@ -174,7 +178,11 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
      /*Erase 256 byte of data*/
      XMC_FLASH_ErasePage(ParameterBlock_Addr);
      XMC_FLASH_ErasePage(motor_PI_config_addr);
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+     XMC_FLASH_ErasePage(Edl7151ParameterBlock_Addr);
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
      XMC_FLASH_ErasePage(Edl7141ParameterBlock_Addr);
+#endif
      /* Enable IRQ */
      NVIC_EnableIRQ(CCU80_0_IRQn);
      /* Command is processed */
@@ -188,8 +196,13 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
       PI_set_default();
       SystemVar.ParamConfigured = 1;
       /* Configure 6edl7141 regs with default parameter */
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+      EDL7151_MOTOR_PARAM_set_default();
+      SystemVar.Edl7151Configured = 1;
+#elif (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7141_FOC_3SH)
       EDL7141_MOTOR_PARAM_set_default();
       SystemVar.Edl7141Configured = 1;
+#endif
      break;
 
 
@@ -281,9 +294,9 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
 
     case UCPROBE_CMD_MOTOR_STOP:
       /* set a CTRAP to stop motor*/
-      CCU8_SLICE_PHASE_U->INS2 &= (0xFFFFFBFF); //to set CTRAP trigger level EV2LM to active high bit24
-      CCU8_SLICE_PHASE_V->INS2 &= (0xFFFFFBFF); //to set CTRAP trigger level EV2LM to active high bit24
-      CCU8_SLICE_PHASE_W->INS2 &= (0xFFFFFBFF); //to set CTRAP trigger level EV2LM to active hign bit24
+      CCU8_SLICE_PHASE_U->INS2 &= (0xFFFFFBFF); /* to set CTRAP trigger level EV2LM to active high bit24 */
+      CCU8_SLICE_PHASE_V->INS2 &= (0xFFFFFBFF); /* to set CTRAP trigger level EV2LM to active high bit24 */
+      CCU8_SLICE_PHASE_W->INS2 &= (0xFFFFFBFF); /* to set CTRAP trigger level EV2LM to active hign bit24 */
       PMSM_FOC_CTRL.motor_start_flag = 0;
       PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_STOP_MOTOR;
       break;
@@ -293,4 +306,4 @@ void PMSM_FOC_ucProbe_CmdProcessing(void)
   }
 }
 
-#endif //#if(USER_UCPROBE_GUI == ENABLED)
+#endif  /* #if(USER_UCPROBE_GUI == ENABLED) */

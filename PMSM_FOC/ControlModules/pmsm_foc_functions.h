@@ -393,8 +393,8 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_ParkTransform_GetResult(PMS
 
   /* Shift to get real results */
   handle_ptr->flux_id >>= CORDIC_SHIFT;
-  handle_ptr->torque_iq = (handle_ptr->torque_iq * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE; // x MPS/K.;
-  handle_ptr->flux_id = (handle_ptr->flux_id * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE; // x MPS/K.;
+  handle_ptr->torque_iq = (handle_ptr->torque_iq * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE;
+  handle_ptr->flux_id = (handle_ptr->flux_id * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE;
 }
 
 /**
@@ -437,7 +437,7 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_Cart2Polar_GetResult(PMSM_F
 
   /* Get real values by scaling down */
   handle_ptr->vref32 = (handle_ptr->vref32 >> CORDIC_SHIFT);
-  handle_ptr->vref32 = (uint32_t) ((handle_ptr->vref32 * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE); // x MPS/K.
+  handle_ptr->vref32 = (uint32_t) ((handle_ptr->vref32 * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE);
   handle_ptr->vref32 = (uint32_t) (handle_ptr->vref32 << CORDIC_SHIFT);
 }
 
@@ -483,7 +483,7 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE int16_t PMSM_FOC_HyperMag_GetResult(void)
 
   /* Get real values by scaling down */
   resultant_magnitude = (resultant_magnitude >> CORDIC_SHIFT);
-  resultant_magnitude = (uint32_t) ((resultant_magnitude * CORDIC_HYPERBOLIC_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE); // x MPS/K.
+  resultant_magnitude = (uint32_t) ((resultant_magnitude * CORDIC_HYPERBOLIC_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE);
   return ((int16_t) resultant_magnitude);
 }
 
@@ -529,7 +529,7 @@ __STATIC_INLINE PMSM_FOC_RAM_ATTRIBUTE uint32_t PMSM_FOC_CircularMag_GetResult(v
 
   /* Get real values by scaling down */
   resultant_magnitude = (resultant_magnitude >> CORDIC_SHIFT);
-  resultant_magnitude = (uint32_t) ((resultant_magnitude * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE); // x MPS/K.
+  resultant_magnitude = (uint32_t) ((resultant_magnitude * CORDIC_CIRCULAR_MPS_BY_K_SCALED) >> CORDIC_MPS_BY_K_SCALE);
   return (resultant_magnitude);
 }
 

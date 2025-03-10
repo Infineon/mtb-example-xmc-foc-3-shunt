@@ -50,6 +50,10 @@
 #include "../ControlModules/pmsm_foc_functions.h"
 #include "../ControlModules/pmsm_foc_interface.h"
 #include "../Configuration/pmsm_foc_mcuhw_params.h"
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+#include "../MCUInit/6EDL_gateway.h"
+#include "../MCUInit/pmsm_foc_gpio.h"
+#endif
 
 
 /**
@@ -82,6 +86,7 @@ typedef enum
   PMSM_FOC_MSM_ERROR               = (1 << 5), /*!< 0032 - ERROR  */
   PMSM_FOC_MSM_IDLE                = (1 << 6), /*!< 0064 - IDLE  */
   PMSM_FOC_MSM_IDLE_EXIT           = (1 << 7), /*!< 0127 - IDLE_EXIT  */
+  PMSM_FOC_MSM_OFF                 = (1 << 8), /*!< 0256 - OFF state  */
 } PMSM_FOC_MSM_t;
 
 
@@ -173,8 +178,8 @@ __STATIC_INLINE void PMSM_FOC_MSM_CLOSED_LOOP_Func(void)
 #define COMPENSATION_FACTOR              (4U)   /* 0 to 8, adjustable for best performance */
   /* Unsigned mode,After division the result will be shifted by COMPENSATION_FACTOR */
   MATH->DIVCON = (0x00008004 | (COMPENSATION_FACTOR << MATH_DIVCON_QSCNT_Pos));
-  MATH->DVD = PMSM_FOC_OUTPUT.svm_vref_16 * (MotorParam.VADC_DCLINK_T << COMPENSATION_FACTOR); // Dividend
-  MATH->DVS = ADC.adc_res_vdc;//Divisor
+  MATH->DVD = PMSM_FOC_OUTPUT.svm_vref_16 * (MotorParam.VADC_DCLINK_T << COMPENSATION_FACTOR); /* Dividend */
+  MATH->DVS = ADC.adc_res_vdc;   /* Divisor */
 #endif
 
   /* Miscellaneous works in FOC, such as ramp up, speed adjustment, stop Motor, etc. Execution time: 2.8us*/
@@ -404,9 +409,7 @@ __STATIC_INLINE void PMSM_FOC_MSM_VF_OPENLOOP_Func(PMSM_FOC_VF_OPEN_LOOP_t* cons
   }
 
   /* Assign open loop speed to FOC output */
-  //PMSM_FOC_OUTPUT.rotor_speed = (int32_t)((handle_ptr->vf_motor_speed*(int32_t)handle_ptr->openloop_to_closedloop_conv_factor)>>handle_ptr->openloop_to_closedloop_conv_factor_scale);
-    PMSM_FOC_OUTPUT.rotor_speed = handle_ptr->vf_motor_speed;
-
+  PMSM_FOC_OUTPUT.rotor_speed = handle_ptr->vf_motor_speed;
 
   /*  Update SVM PWM. */
   PMSM_FOC_SVPWM_Update(handle_ptr->vref_mag, handle_ptr->vref_angle);
@@ -508,7 +511,7 @@ __STATIC_INLINE void PMSM_FOC_MSM_BRAKE_BOOTSTRAP_Func(void)
       NVIC_ClearPendingIRQ(TRAP_IRQn);
       PMSM_FOC_VariablesInit();
 
-      if (MotorParam.InitPosDetect == ROTOR_PRE_ALIGN_NONE)
+    if (MotorParam.InitPosDetect == ROTOR_PRE_ALIGN_NONE)
       {
         if((MotorParam.StartupMethod == MOTOR_STARTUP_DIRECT_FOC) && (MotorParam.ControlScheme != VF_OPEN_LOOP_CTRL))
         /* Next, directly go to the close loop. */

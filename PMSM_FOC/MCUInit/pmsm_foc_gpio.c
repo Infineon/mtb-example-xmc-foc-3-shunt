@@ -49,6 +49,20 @@
 /**
  *  Data Structure initialization - GPIO Configuration for Gate Driver enable pin .
  */
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+const XMC_GPIO_CONFIG_t Inverter_OFFState_Pin_Config =
+{ .mode = XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
+  .output_level = XMC_GPIO_OUTPUT_LEVEL_HIGH,
+};
+
+/** GPIO Init handle for OFF state diagnostic */
+const XMC_GPIO_CONFIG_t PMSM_FOC_GPIO_OFFstate_Config =
+{
+  .mode             = XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
+  .output_level     = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
+#endif
+
 XMC_GPIO_CONFIG_t Inverter_Enable_Pin_Config  =
 {
   .mode            = (XMC_GPIO_MODE_t)XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
@@ -166,11 +180,7 @@ const XMC_GPIO_CONFIG_t PMSM_FOC_GPIO_PhW_Low_Config =
 void PMSM_FOC_GPIO_Init(void)
 {
     /* GPIO defination for INVERTER_EN_PIN, BRAKE_EN_PIN, AUTO_ZERO, DRV_CLK_EN_PIN are declared at EDL7141_Config_init() */
-//  #ifdef INVERTER_EN_PIN
-//  /* Gate driver enable/disable pin */
-//  XMC_GPIO_Init(INVERTER_EN_PIN, &Inverter_Enable_Pin_Config);
-//  #endif
-//
+
   #ifdef CYBSP_GD_NBRAKE
   /* Brake enable/disable pin */
   XMC_GPIO_Init(CYBSP_GD_NBRAKE, &Brake_Enable_Pin_Config);
@@ -205,11 +215,8 @@ void PMSM_FOC_GPIO_Init(void)
   /* Phase W High Side PWM Output */
   XMC_GPIO_Init(PHASE_W_HS_PIN, &PMSM_FOC_GPIO_PhW_High_Config);
 
-  /* Phase W Low Side PWM Output *//* P0.9 ALT5 CCU80.OUT21 */
+  /* Phase W Low Side PWM Output */
   XMC_GPIO_Init(PHASE_W_LS_PIN, &PMSM_FOC_GPIO_PhW_Low_Config);
-
-  /* Debugging only - ADC trigger */
-  //XMC_GPIO_SetMode(PHASE_ADC_TRIG_PIN, PHASE_ADC_TRIG_PIN_ALT_SELECT);
 
   #ifdef TRAP_PIN
   #if(USER_CCU8_INPUT_TRAP_LEVEL == XMC_CCU8_SLICE_EVENT_LEVEL_SENSITIVITY_ACTIVE_LOW)
@@ -233,3 +240,23 @@ void PMSM_FOC_GPIO_Init(void)
   XMC_GPIO_SetOutputHigh(TEST_PIN2);
   #endif
 }
+
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+/* API to initialize GPIO pins used */
+void PMSM_FOC_OFF_STATE_GPIO_Init(void)
+{
+  XMC_GPIO_SetOutputHigh(OFFSTATE_DIAG_EN_PIN);  /* set OFFSTATE_DIAG_EN_PIN P4_9 high */
+  XMC_GPIO_Init(PHASE_U_HS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_U_HS_PIN);  /* set PHASE_U_HS_PIN low */
+  XMC_GPIO_Init(PHASE_U_LS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_U_LS_PIN);  /* set PHASE_U_LS_PIN low */
+  XMC_GPIO_Init(PHASE_V_HS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_V_HS_PIN);  /* set PHASE_V_HS_PIN low */
+  XMC_GPIO_Init(PHASE_V_LS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_V_LS_PIN);  /* set PHASE_V_LS_PIN low */
+  XMC_GPIO_Init(PHASE_W_HS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_W_HS_PIN);  /* set PHASE_W_HS_PIN low */
+  XMC_GPIO_Init(PHASE_W_LS_PIN, &PMSM_FOC_GPIO_OFFstate_Config);
+  XMC_GPIO_SetOutputLow(PHASE_W_LS_PIN);  /* set PHASE_W_LS_PIN low */
+}
+#endif

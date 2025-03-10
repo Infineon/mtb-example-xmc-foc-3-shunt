@@ -56,9 +56,16 @@
 #include "xmc_usic.h"
 #include "xmc_gpio.h"
 #include "xmc_uart.h"
+
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
 #include "../Configuration/pmsm_foc_user_input_config.h"
 #include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../ToolInterface/Register.h"
+#else
+#include "../Configuration/pmsm_foc_user_input_config.h"
+#include "../Configuration/pmsm_foc_gatedrv_config.h"
+#include "../ToolInterface/Register.h"
+#endif
 
 /*********************************************************************************************************************
  * MACROS
@@ -67,7 +74,9 @@
 #define GPIO_AUTO_ZERO           P1_2
 #define GPIO_EN_DRV              P0_7   /* Inverter enable pin in general purpose output mode */
 #define GPIO_EN_DRV_CLK          P2_13  /* Watchdog clock on EN_DRV pin */
+#define GPIO_EN_OFFSTATE_DIAG    P4_9   /* Enable bias on HSx pin for off-state diagnostic */
 #define Edl7141ParameterBlock_Addr (uint32_t*)0x10010000
+#define Edl7151ParameterBlock_Addr (uint32_t*)0x10010000
 
 /* For 6EDL7141 evaluation */
 #define FW_VER                    0x02   /* for FW version storage */
@@ -82,17 +91,27 @@
 
 #define LED_TO_BLINK              XMC_GPIO_PORT0, 11
 
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+extern uint8_t GUIwrReg_6EDL7151_addr;
+extern uint8_t WriteReg_6EDL7151_addr;
+extern uint16_t GUIwrReg_6EDL7151_data;
+extern uint16_t WriteReg_6EDL7151_data;
+extern uint8_t GuiMonitor_6EDL7151_addr;
+extern uint16_t GuiMonitor_6EDL7151_value;
+#else
 extern uint8_t GUIwrReg_6EDL7141_addr;
 extern uint8_t WriteReg_6EDL7141_addr;
 extern uint16_t GUIwrReg_6EDL7141_data;
 extern uint16_t WriteReg_6EDL7141_data;
 extern uint8_t GuiMonitor_6EDL7141_addr;
 extern uint16_t GuiMonitor_6EDL7141_value;
+#endif
 
 typedef struct
 {
     uint8_t en_drv_level:1;
     uint8_t nbrake_level:1;
+    uint8_t en_off_state_diagnostic:1;
 } EDL_IO_CONTROL_t;
 extern EDL_IO_CONTROL_t EdlIo;
 
@@ -109,7 +128,11 @@ extern EDL_IO_CONTROL_t EdlIo;
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void EDL7151_FLASH_parameter_load(void);
+#else
 void EDL7141_FLASH_parameter_load(void);
+#endif
 
 /**
  * @brief To communicate with PC GUI 6EDL Configurator
@@ -118,7 +141,11 @@ void EDL7141_FLASH_parameter_load(void);
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void EDL7151_Update(void);
+#else
 void EDL7141_Update(void);
+#endif
 
 /**
  * @brief Initialize SPI for 6EDL communication, write configure register value into device, read back all register values
@@ -127,7 +154,11 @@ void EDL7141_Update(void);
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void EDL7151_Config_init(void);
+#else
 void EDL7141_Config_init(void);
+#endif
 
 /**
  * @brief Default 6EDL7141 register setting for testing purpose if macro PROGRAM_DEFAULT_PARAM set to 1U
@@ -136,7 +167,11 @@ void EDL7141_Config_init(void);
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void EDL7151_MOTOR_PARAM_set_default(void);
+#else
 void EDL7141_MOTOR_PARAM_set_default(void);
+#endif
 
 /**
  * @brief To write the 6EDL7141 configuration registers to default values
@@ -145,7 +180,11 @@ void EDL7141_MOTOR_PARAM_set_default(void);
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void SPI_write_6EDL7151_registers(void);
+#else
 void SPI_write_6EDL7141_registers(void);
+#endif
 
 /**
  * @brief To read all the 6EDL7141 registers when startup
@@ -154,7 +193,22 @@ void SPI_write_6EDL7141_registers(void);
  *
  * @retval None
  */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void SPI_read_6EDL7151_registers(void);
+#else
 void SPI_read_6EDL7141_registers(void);
+#endif
+
+/**
+ * @brief To setup for OFF state Diagnostic
+ *
+ * @param None
+ *
+ * @retval None
+ */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+void EDL7151_OFFstate_diagnose(void);
+#endif
 
 /**
  * @}

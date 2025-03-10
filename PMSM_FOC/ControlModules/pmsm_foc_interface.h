@@ -114,7 +114,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
           MotorVar.error_status |= PMSM_FOC_EID_UNDER_VOLT;
       }
     }
-// End of Over/Under voltage protection
+/* End of Over/Under voltage protection */
 
   /***************** Over Current protection *****************************************/
 #if(USER_OVERCURRENT_PROTECTION == ENABLED)
@@ -132,7 +132,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
       PMSM_FOC_CTRL.error_status |= PMSM_FOC_EID_OVER_CURRENT;
       MotorVar.error_status |= PMSM_FOC_EID_OVER_CURRENT;
   }
-#endif  // End of #if(USER_OVERCURRENT_PROTECTION == ENABLED)
+#endif  /* End of #if(USER_OVERCURRENT_PROTECTION == ENABLED) */
 
   /***************** Torque Limit protection *****************************************/
 #if(USER_TORQUE_LIMITER == ENABLED)
@@ -160,7 +160,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
       PMSM_FOC_CTRL.iq_limit_blanking_counter = 0;
     }
   }
-#endif  // End of #if(USER_TORQUE_LIMITER == ENABLED)
+#endif  /* End of #if(USER_TORQUE_LIMITER == ENABLED) */
 
   /***************** Over temperature Protection ***************************************
   * Read analog input from MCP9700 temperature sensor
@@ -194,7 +194,7 @@ __STATIC_INLINE void PMSM_FOC_SysMonitoring(void)
   {
     /* Enable low side braking in 6EDL7141 gate driver through nBRAKE pin and go to error state */
     XMC_GPIO_SetOutputLow(CYBSP_GD_NBRAKE);
-    PMSM_FOC_CTRL.msm_state = (1 << 5);//PMSM_FOC_MSM_ERROR;
+    PMSM_FOC_CTRL.msm_state = (1 << 5);  /*PMSM_FOC_MSM_ERROR*/
   }
 }
 

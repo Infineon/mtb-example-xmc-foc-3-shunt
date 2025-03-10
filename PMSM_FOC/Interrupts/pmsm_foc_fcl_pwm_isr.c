@@ -77,6 +77,12 @@ PMSM_FOC_RAM_ATTRIBUTE void PMSM_FOC_FCL_ISR(void)
 #if defined (__ICCARM__)
 #pragma diag_suppress=Ta023
 #endif
+#if (MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+  if ((EdlIo.en_off_state_diagnostic == 1U) && (PMSM_FOC_CTRL.msm_state == PMSM_FOC_MSM_STOP_MOTOR || PMSM_FOC_CTRL.msm_state == PMSM_FOC_MSM_IDLE) && SYSTEM_BE_IDLE)
+  {
+    PMSM_FOC_CTRL.msm_state = PMSM_FOC_MSM_OFF;
+  }
+#endif
   PMSM_FOC_MSM();
   iu = PMSM_FOC_INPUT.i_u;
   iv = PMSM_FOC_INPUT.i_v;

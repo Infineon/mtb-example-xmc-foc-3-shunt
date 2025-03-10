@@ -41,6 +41,8 @@
  **********************************************************************************************************************/
 #include "../Configuration/pmsm_foc_user_input_config.h"
 #include "Register.h"
+
+
 #include "../Configuration/pmsm_foc_gatedrv_config.h"
 #include "../MCUInit/6EDL_gateway.h"
 #include "../Configuration/pmsm_foc_mcuhw_params.h"
@@ -77,7 +79,7 @@ void MC_Info_init(void)
     MC_INFO.chip_id = SCU_GENERAL->IDCHIP;
     MC_INFO.parameter_version = PARAMETER_VERSION;
     MC_INFO.firmware_version = FIRMWARE_VERSION;
-    MC_INFO.kit_id = read_kit_id(); //0;        /* Hardware kit ID, initialize with 0 (Unidentified). After power up, firmware will read analog input to get actual kit id */
+    MC_INFO.kit_id = read_kit_id();        /* Hardware kit ID, initialize with 0 (Unidentified). After power up, firmware will read analog input to get actual kit id */
 }
 
 
@@ -131,6 +133,7 @@ void MOTOR_PARAM_set_default(void)
   MotorParam.EnableFault.UnderVoltage = USER_VDC_UV_OV_PROTECTION;
   MotorParam.EnableFault.SpiError = 0;
   MotorParam.EnableFault.Nfault = 1;
+  MotorParam.EnableFault.OffState = 1;
 
   /*********************************************************************************************************************
    * Motor group
@@ -143,7 +146,7 @@ void MOTOR_PARAM_set_default(void)
 #pragma diag_suppress=Pa093
 #endif
   MotorParam.G_OPAMP_PER_PHASECURRENT = ((uint32_t) USER_CURRENT_AMPLIFIER_GAIN);
-  MotorParam.I_MAX_A = ((USER_MAX_ADC_VDD_V / (USER_R_SHUNT_OHM * USER_CURRENT_AMPLIFIER_GAIN)) / 2U);  //
+  MotorParam.I_MAX_A = ((USER_MAX_ADC_VDD_V / (USER_R_SHUNT_OHM * USER_CURRENT_AMPLIFIER_GAIN)) / 2U);
   MotorParam.I_MIN_A = (1.0f); /* Minimum current which can be sensed by adc */
   MotorParam.CCU8_PERIOD_REG_T = ((uint32_t) ((USER_PCLK_FREQ_MHz * 1000000) / USER_CCU8_PWM_FREQ_HZ) - 1);
   MotorParam.CCU4_PERIOD_REG = ((uint32_t) ((USER_PCLK_FREQ_MHz * 1000) / USER_CCU4_DEBUG_KHZ) - 1);
@@ -226,7 +229,7 @@ void PI_set_default(void)
   PI_CONFIG.PI_SPEED_KI = USER_PI_SPEED_KI;
   PI_CONFIG.PI_SPEED_SCALE = USER_PI_SPEED_SCALE_KPKI;
   PI_CONFIG.PI_SPEED_IK_LIMIT_MAX = (1<<(30 - 0));       /* (1<<30). I[k] output limit HIGH. */
-  PI_CONFIG.PI_SPEED_IK_LIMIT_MIN = (-(1<<(30 - 0)));// - USER_PI_SPEED_SCALE_KPKI)));    /* (-(1<<30 - scale)). I[k] output limit LOW. */
+  PI_CONFIG.PI_SPEED_IK_LIMIT_MIN = (-(1<<(30 - 0)));    /* (-(1<<30 - scale)). I[k] output limit LOW. */
   PI_CONFIG.PI_SPEED_UK_LIMIT_MAX = USER_PI_SPEED_UK_LIMIT_MAX;
   PI_CONFIG.PI_SPEED_UK_LIMIT_MIN = USER_PI_SPEED_UK_LIMIT_MIN;
   
@@ -267,8 +270,6 @@ void FLASH_Parameter_load(void)
      * same value, otherwise parameter block won't be loaded
      */
 #if (PROGRAM_DEFAULT_PARAM == 1)
-//      uint32_t *motor_PI_config_addr = PMSM_SL_FOC_UCPROBE_CONFIG_ADDR;
-
         MOTOR_PARAM_set_default();  /* configure MotorParam parameters*/
         XMC_FLASH_ProgramVerifyPage(ParameterBlock_Addr, (uint32_t *)&MotorParam);
 
@@ -310,7 +311,7 @@ uint32_t Reserved = 0;
 void* const RegisterAddrMap[REGISTER_MAP_SIZE] =
 {
 /*************************** BLDC motor control registers ***********************/
-#if (EDL7141_CHIP_VERSION == 21)
+#if ((EDL7141_CHIP_VERSION == 21) || (VALID_FLASH_DATA == 0x1))
   /*0*/   (void*)&PMSM_FOC_INPUT.ref_speed,
   /*1*/   (void*)&PMSM_FOC_INPUT.i_v,
   /*2*/   (void*)&PMSM_FOC_INPUT.i_w,
@@ -361,6 +362,35 @@ void* const RegisterAddrMap[REGISTER_MAP_SIZE] =
   /*47*/  (void*)&Test2,
   /*48*/  (void*)&Test3,
   /*49*/  (void*)&Test4,
+  
+  #if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+  /*************************** 6EDL7151 registers ***********************/
+  /*50*/  (void*)&Edl7151Reg.FAULT_ST,        /* 0. Read FAULT_ST register */
+  /*51*/  (void*)&Edl7151Reg.TEMP_ST,         /* 1. Read TEMP_ST register */
+  /*52*/  (void*)&Edl7151Reg.SUPPLY_ST,       /* 2. Read SUPPLY_ST register */
+  /*53*/  (void*)&Edl7151Reg.FUNCT_ST,        /* 3. Read FUNCT_ST register */
+  /*54*/  (void*)&Edl7151Reg.OTP_ST,          /* 4. Read OTP_ST register */
+  /*55*/  (void*)&Edl7151Reg.ADC_ST,          /* 5. Read ADC_ST register */
+  /*56*/  (void*)&Edl7151Reg.CP_ST,           /* 6. Read CP_ST register */
+  /*57*/  (void*)&Edl7151Reg.DEVICE_ID,       /* 7. Read DEVICE_ID register */
+  /*58*/  (void*)&Edl7151Reg.FAULTS_CLR,      /* 0. Read HS_GATE_CFG register */
+  /*59*/  (void*)&Edl7151Reg.SUPPLY_CFG,      /* 1. Read SUPPLY_CFG register */
+  /*60*/  (void*)&Edl7151Reg.ADC_CFG,         /* 2. Read ADC_CFG register */
+  /*61*/  (void*)&Edl7151Reg.PWM_CFG,         /* 3. Read PWM_CFG register */
+  /*62*/  (void*)&Edl7151Reg.SENSOR_CFG,      /* 4. Read SENSOR_CFG register */
+  /*63*/  (void*)&Edl7151Reg.WD_CFG,          /* 5. Read WD_CFG register */
+  /*64*/  (void*)&Edl7151Reg.WD_CFG2,         /* 6. Read WD_CFG2 register */
+  /*65*/  (void*)&Edl7151Reg.IDRIVE_CFG,      /* 7. Read IDRIVE_CFG register */
+  /*66*/  (void*)&Edl7151Reg.IDRIVE_PRE_CFG,  /* 8. Read IDRIVE_PRE_CFG register */
+  /*67*/  (void*)&Edl7151Reg.TDRIVE_SRC_CFG,  /* 9. Read TDRIVE_SRC_CFG register */
+  /*68*/  (void*)&Edl7151Reg.TDRIVE_SINK_CFG, /* 10. Read TDRIVE_SINK_CFG register */
+  /*69*/  (void*)&Edl7151Reg.DT_CFG,          /* 11. Read DT_CFG register */
+  /*70*/  (void*)&Edl7151Reg.CP_CFG,          /* 11. Read CP_CFG register */
+  /*71*/  (void*)&Edl7151Reg.CSAMP_CFG,       /* 12. Read CSAMP_CFG register */
+  /*72*/  (void*)&Edl7151Reg.CSAMP_CFG2,      /* 13. Read CSAMP_CFG2 register */
+  /*73*/  (void*)&Edl7151Reg.OTP_PROG,        /* 14. Read OTP_PROG register */
+  
+  #else
   /*************************** 6EDL7141 registers ***********************/
   /*50*/  (void*)&Edl7141Reg.FAULT_ST,        /* 0. Read FAULT_ST register */
   /*51*/  (void*)&Edl7141Reg.TEMP_ST,         /* 1. Read TEMP_ST register */
@@ -386,8 +416,9 @@ void* const RegisterAddrMap[REGISTER_MAP_SIZE] =
   /*71*/  (void*)&Edl7141Reg.CSAMP_CFG,       /* 12. Read CSAMP_CFG register */
   /*72*/  (void*)&Edl7141Reg.CSAMP_CFG2,      /* 13. Read CSAMP_CFG2 register */
   /*73*/  (void*)&Edl7141Reg.OTP_PROG,        /* 14. Read OTP_PROG register */
-#endif //(EDL7141_CHIP_VERSION == 21)
-
+  #endif /* #if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH) */
+  
+#endif /* ((EDL7141_CHIP_VERSION == 21) || (VALID_FLASH_DATA == 0x1)) */
 };
 
 enum {SCOPE_INT8U, SCOPE_INT8S, SCOPE_INT16U, SCOPE_INT16S, SCOPE_INT32U, SCOPE_INT32S, SCOPE_FP32};

@@ -72,9 +72,17 @@ typedef struct
         struct
         {
             uint32_t ParamConfigured:1;     /* This bit indicates parameters are configured either from flash or configured by GUI */
+            
+            #if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+            uint32_t Edl7151Configured:1;   /* This bit indicates 6EDL7151 configure registers are configured either from flash or by GUI */
+            #else
             uint32_t Edl7141Configured:1;   /* This bit indicates 6EDL7141 configure registers are configured either from flash or by GUI */
+            #endif
             uint32_t OffsetCalibrated:1;    /* This bit indicates current sense offset is calibrated */
             uint32_t ReInitParam:1;         /* This bit can be set by GUI or other code re-init peripheral configuration */
+#if(MOTOR0_PMSM_FOC_BOARD == EVAL_6EDL7151_FOC_3SH)
+            uint32_t OffState_fault:6;      /* This stored the FUNCT_ST's OFF State diagnostic field */
+#endif
         };
         uint32_t Status;
     };
@@ -115,6 +123,7 @@ typedef struct
             uint16_t UnderVoltage:1;
             uint16_t SpiError:1;
             uint16_t Nfault:1;
+            uint16_t OffState:1;
         };
         uint16_t Value;
     } MaskedFault;
@@ -168,6 +177,7 @@ typedef struct
             uint16_t UnderVoltage:1;
             uint16_t SpiError:1;
             uint16_t Nfault:1;
+            uint16_t OffState:1;
         };
         uint16_t Value;
     } EnableFault;

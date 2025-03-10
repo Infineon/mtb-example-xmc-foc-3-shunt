@@ -69,7 +69,7 @@ XMC_SCU_CLOCK_CONFIG_t Clock_Config =
  * GLOBAL DATA
 ***********************************************************************************************************************/
 /* Global variable, MCU Reset Status Information, reason of last reset */
-uint32_t MCUResetStatus;    // Global variable. MCU Reset Status Information, reason of last reset.
+uint32_t MCUResetStatus;
 
 /*********************************************************************************************************************
  * API IMPLEMENTATION
